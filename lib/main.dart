@@ -36,6 +36,12 @@ class MainApp extends StatelessWidget {
 
 class MainAppState extends ChangeNotifier{
   Person user = Person.empty();
+  double kcal = 0.0;
+  double proteins = 0.0;
+  double carbs = 0.0;
+  double fats = 0.0;
+  var dailyNorms = {};
+  var mealNorms = {};
   TextEditingController nameCtrl = TextEditingController();
   TextEditingController genderCtrl = TextEditingController();
   TextEditingController ageCtrl = TextEditingController();
@@ -80,11 +86,31 @@ class MainAppState extends ChangeNotifier{
       return Person(name: name, gender: gender, age: age, weight: weight, height: height);
     }
   }
+  void calculateNorms(){
+    if (user.gender == 'Мужчина'){
+      kcal = (66.5 + (13.75 * user.weight) + (5.003 * user.height) - (6.775 * user.age)) * 1.375;
+    }
+    else{
+      kcal = (655.1 + (9.563 * user.weight) + (1.85 * user.height) - (4.676 * user.age)) * 1.375;
+    }
+    proteins = kcal * 0.3;
+    fats = kcal * 0.3;
+    carbs = kcal * 0.4;
+    mealNorms["Завтрак"] = [kcal * 0.25, proteins * 0.3, fats * 0.3, carbs * 0,4];
+    mealNorms["Обед"] = [kcal * 0.4, proteins * 0.3, fats * 0.3, carbs * 0,4];
+    mealNorms["Ужин"] = [kcal * 0.35, proteins * 0.3, fats * 0.3, carbs * 0,4];
+    dailyNorms["Калории"] = kcal;
+    dailyNorms["Белки"] = proteins;
+    dailyNorms["Жиры"] = fats;
+    dailyNorms["Углеводы"] = carbs;
+  }
   MainAppState() {
     readProfileDataFromSharedPrefs().then((userData) {
       user = userData;
       notifyListeners();
     });
+    calculateNorms();
     sendProfileDataToTextFields();
+    notifyListeners();
   }
 }

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:healthy_eating_diary/main.dart';
+import 'package:healthy_eating_diary/screens/fill_meal_screen.dart';
+import 'package:provider/provider.dart';
 
 class DiaryScreen extends StatelessWidget {
   const DiaryScreen({super.key});
@@ -38,13 +41,13 @@ class StatusBars extends StatelessWidget {
         alignment: Alignment.centerLeft,
         child: Column(
           children: [
-            StatusRow(statusBarName: 'Калории'),
+            StatusRow(statusBarName: "Калории"),
             SizedBox(height: 16.0,),
-            StatusRow(statusBarName: 'Белки'),
+            StatusRow(statusBarName: "Белки"),
             SizedBox(height: 16.0,),
-            StatusRow(statusBarName: 'Жиры'),
+            StatusRow(statusBarName: "Жиры"),
             SizedBox(height: 16.0,),
-            StatusRow(statusBarName: 'Углеводы'),
+            StatusRow(statusBarName: "Углеводы"),
           ],
         ),
       ),
@@ -62,6 +65,7 @@ class StatusRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MainAppState>();
     return Row(
       children: [
         Text(
@@ -70,9 +74,12 @@ class StatusRow extends StatelessWidget {
                 fontSize: 20,
               ),
         ),
-        const Card(
-          child: Card(child: SizedBox(),),
-        )
+        Text(
+          '   0/${appState.dailyNorms[statusBarName].round()}',
+          style: const TextStyle(
+                fontSize: 20,
+              ),
+        ),
       ],
     );
   }
@@ -90,7 +97,6 @@ class Meals extends StatelessWidget {
         GenMeal(mealName: "Завтрак"),
         GenMeal(mealName: "Обед"),
         GenMeal(mealName: "Ужин"),
-        GenMeal(mealName: "Перекус"),
       ],
     );
   }
@@ -105,6 +111,7 @@ class GenMeal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MainAppState>();
     return Card(
       child: Padding(
         padding: const EdgeInsets.only(left: 8.0, right: 8.0),
@@ -112,14 +119,21 @@ class GenMeal extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              mealName,
+              "$mealName    0/${appState.mealNorms[mealName][0].round()}",
               style: const TextStyle(
                 fontSize: 20,
               ),
             ),
-            const ElevatedButton(
-              onPressed: null, 
-              child: Icon(
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FillMealScreen(),
+                  ),
+                );
+              }, 
+              child: const Icon(
                 Icons.add
               )
             )

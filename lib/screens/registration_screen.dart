@@ -47,7 +47,8 @@ class NextButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () {
           if (formKey.currentState!.validate()) {
-            appState.saveProfileDataFromTextFields;
+            appState.saveProfileDataFromTextFields();
+            appState.calculateNorms();
             Navigator.push(
               context,
               MaterialPageRoute(
