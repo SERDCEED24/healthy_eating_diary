@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:healthy_eating_diary/screens/registration_screen.dart';
 import 'package:healthy_eating_diary/models/person.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:async';
 
 void main() {
   runApp(const MainApp());
@@ -90,7 +91,7 @@ class MainAppState extends ChangeNotifier{
     if (user.gender == 'Мужчина'){
       kcal = (66.5 + (13.75 * user.weight) + (5.003 * user.height) - (6.775 * user.age)) * 1.375;
     }
-    else{
+    else {
       kcal = (655.1 + (9.563 * user.weight) + (1.85 * user.height) - (4.676 * user.age)) * 1.375;
     }
     proteins = kcal * 0.3;

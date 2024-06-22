@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:healthy_eating_diary/main.dart';
 import 'package:healthy_eating_diary/widgets/scaffold_with_panel.dart';
 
-
 class FillMealScreen extends StatelessWidget {
   FillMealScreen({super.key});
 
@@ -29,14 +28,19 @@ class FillMealScreen extends StatelessWidget {
   }
 }
 
-class ListOfDishes extends StatelessWidget {
+class ListOfDishes extends StatefulWidget {
   const ListOfDishes({
     super.key,
   });
 
   @override
+  State<ListOfDishes> createState() => _ListOfDishesState();
+}
+
+class _ListOfDishesState extends State<ListOfDishes> {
+  @override
   Widget build(BuildContext context) {
-    return Placeholder();
+    return  Placeholder();
   }
 }
 
