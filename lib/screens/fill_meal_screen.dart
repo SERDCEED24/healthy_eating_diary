@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:healthy_eating_diary/models/food.dart';
 import 'package:provider/provider.dart';
 import 'package:healthy_eating_diary/main.dart';
-import 'package:healthy_eating_diary/widgets/scaffold_with_panel.dart';
 
 class FillMealScreen extends StatelessWidget {
   const FillMealScreen({super.key});
@@ -44,16 +43,11 @@ class ListOfDishes extends StatefulWidget {
 }
 
 class _ListOfDishesState extends State<ListOfDishes> {
-  Future<List<Food>> readJsonFile() async {
-    var input = await rootBundle.loadString('assets/food_db.json');
-    var json = jsonDecode(input) as List<dynamic>;
-    return json
-        .map((dynamic e) => Food.fromJson(e as Map<String, dynamic>))
-        .toList();
-  }
-
-  List<Food> foodList = [];
+  List<Food> foodList= [];
   List<Food> selectedFoodList = [];
+  List<Food> displayedFoodList = [];
+
+  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
@@ -62,49 +56,134 @@ class _ListOfDishesState extends State<ListOfDishes> {
   }
 
   Future<void> _loadFoodList() async {
-    List<Food> loadedFoodList = await readJsonFile();
+    var input = await rootBundle.loadString('assets/food_db.json');
+    var json = jsonDecode(input) as List<dynamic>;
+    List<Food> loadedFoodList = json.map((dynamic e) => Food.fromJson(e as Map<String, dynamic>)).toList();
+
     setState(() {
       foodList = loadedFoodList;
+      displayedFoodList = loadedFoodList;
     });
   }
 
   void _toggleSelection(Food food) {
     if (!selectedFoodList.contains(food)) {
       setState(() {
-        foodList.add(food);
+        selectedFoodList.add(food);
       });
     } else {
       setState(() {
-        foodList.remove(food);
+        selectedFoodList.remove(food);
       });
     }
+  }
+
+  void _incrementWeight(Food food) {
+    setState(() {
+      food.weight += 10;
+    });
+  }
+
+  void _decrementWeight(Food food) {
+    if (food.weight > 50) { 
+      setState(() {
+        food.weight -= 10;
+      });
+    }
+  }
+
+  void _performSearch(String query) {
+    List<Food> results = [];
+
+    if (query.isEmpty) {
+      results = foodList;
+    } else {
+      results = foodList.where((food) => food.name.toLowerCase().contains(query.toLowerCase())).toList();
+    }
+
+    setState(() {
+      displayedFoodList = results;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return foodList.isEmpty
         ? const Center(child: CircularProgressIndicator())
-        : SizedBox(
-          width: 500,
-          height: 500,
-          child: ListView.builder(
-              itemCount: foodList.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(foodList[index].toString()),
-                  trailing: Checkbox(
-                    value: selectedFoodList.contains(foodList[index]),
-                    onChanged: (bool? value) {
-                      _toggleSelection(foodList[index]);
-                    },
+        : Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  controller: searchController,
+                  onChanged: _performSearch,
+                  decoration: InputDecoration(
+                    labelText: 'Поиск блюд',
+                    hintText: 'Введите название блюда',
+                    prefixIcon: const Icon(Icons.search),
+                    suffixIcon: IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        searchController.clear();
+                        _performSearch('');
+                      },
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
                   ),
-                  onTap: () {
-                    _toggleSelection(foodList[index]);
+                ),
+              ),
+              SizedBox(
+                width: 500,
+                height:400,
+                child: ListView.builder(
+                  itemCount: displayedFoodList.length,
+                  itemBuilder: (context, index) {
+                    Food food = displayedFoodList[index];
+                    bool isSelected = selectedFoodList.contains(food);
+                
+                    return ListTile(
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          SizedBox(
+                            width: 200,
+                            child: Text(food.toString(), softWrap: true,)
+                          ),
+                          Row(
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.remove),
+                                onPressed: () {
+                                  _decrementWeight(food);
+                                },
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.add),
+                                onPressed: () {
+                                  _incrementWeight(food);
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      trailing: Checkbox(
+                        value: isSelected,
+                        onChanged: (bool? value) {
+                          _toggleSelection(food);
+                        },
+                      ),
+                      onTap: () {
+                        _toggleSelection(food);
+                      },
+                    );
                   },
-                );
-              },
-            ),
-        );
+                ),
+              ),
+            ],
+          );
   }
 }
 

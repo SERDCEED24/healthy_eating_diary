@@ -24,7 +24,7 @@ class Food {
     for (var el in [calories, proteins, fats, carbohydrates, weight]) {
       allButName.add((el % 1 == 0) ? el.toStringAsFixed(0) : el.toString());
     }
-    return "$name, К/Б/Ж/У - ${allButName[0]}/${allButName[1]}/${allButName[2]}/${allButName[3]},\nВес - ${allButName[4]} грамм";
+    return "$name,\nК/Б/Ж/У - ${allButName[0]}/${allButName[1]}/${allButName[2]}/${allButName[3]},\nВес - ${allButName[4]} грамм";
   }
   factory Food.fromJson(Map<String, dynamic> json) => _$FoodFromJson(json);
   Map<String, dynamic> toJson() => _$FoodToJson(this);
