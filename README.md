@@ -1,3 +1,3 @@
-# healthy_eating_diary
+# Healthy Eating Diary
 
-A new Flutter project.
+An app to help people eat helthy food and track statistics.
