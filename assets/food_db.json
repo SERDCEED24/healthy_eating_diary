@@ -4,349 +4,399 @@
         "calories": 49,
         "proteins": 1.1,
         "fats": 2.3,
-        "carbohydrates": 6.4
+        "carbohydrates": 6.4,
+        "weight": 100
     },
     {
         "name": "Щи",
         "calories": 30,
         "proteins": 1.2,
         "fats": 1.3,
-        "carbohydrates": 4.3
+        "carbohydrates": 4.3,
+        "weight": 100
     },
     {
         "name": "Салат Оливье",
         "calories": 198,
         "proteins": 2.9,
         "fats": 15.3,
-        "carbohydrates": 7.8
+        "carbohydrates": 7.8,
+        "weight": 100
     },
     {
         "name": "Гречневая каша",
         "calories": 110,
         "proteins": 4.1,
         "fats": 1.2,
-        "carbohydrates": 21.3
+        "carbohydrates": 21.3,
+        "weight": 100
     },
     {
         "name": "Плов",
         "calories": 161,
         "proteins": 4.8,
         "fats": 8.0,
-        "carbohydrates": 17.8
+        "carbohydrates": 17.8,
+        "weight": 100
     },
     {
         "name": "Винегрет",
         "calories": 130,
         "proteins": 1.5,
         "fats": 7.0,
-        "carbohydrates": 14.5
+        "carbohydrates": 14.5,
+        "weight": 100
     },
     {
         "name": "Рассольник",
         "calories": 62,
         "proteins": 1.2,
         "fats": 3.0,
-        "carbohydrates": 7.2
+        "carbohydrates": 7.2,
+        "weight": 100
     },
     {
         "name": "Солянка",
         "calories": 110,
         "proteins": 5.2,
         "fats": 8.4,
-        "carbohydrates": 4.7
+        "carbohydrates": 4.7,
+        "weight": 100
     },
     {
         "name": "Котлеты из говядины",
         "calories": 250,
         "proteins": 14.0,
         "fats": 20.0,
-        "carbohydrates": 6.0
+        "carbohydrates": 6.0,
+        "weight": 100
     },
     {
         "name": "Блины",
         "calories": 180,
         "proteins": 5.2,
         "fats": 7.2,
-        "carbohydrates": 24.0
+        "carbohydrates": 24.0,
+        "weight": 100
     },
     {
         "name": "Окрошка",
         "calories": 70,
         "proteins": 2.0,
         "fats": 3.5,
-        "carbohydrates": 7.5
+        "carbohydrates": 7.5,
+        "weight": 100
     },
     {
         "name": "Пельмени из свинины",
         "calories": 275,
         "proteins": 11.0,
         "fats": 15.0,
-        "carbohydrates": 22.0
+        "carbohydrates": 22.0,
+        "weight": 100
     },
     {
         "name": "Сырники",
         "calories": 220,
         "proteins": 10.0,
         "fats": 13.0,
-        "carbohydrates": 16.0
+        "carbohydrates": 16.0,
+        "weight": 100
     },
     {
         "name": "Голубцы",
         "calories": 120,
         "proteins": 6.0,
         "fats": 8.0,
-        "carbohydrates": 8.0
+        "carbohydrates": 8.0,
+        "weight": 100
     },
     {
         "name": "Ленивые голубцы",
         "calories": 140,
         "proteins": 6.5,
         "fats": 8.5,
-        "carbohydrates": 12.0
+        "carbohydrates": 12.0,
+        "weight": 100
     },
     {
         "name": "Зразы",
         "calories": 210,
         "proteins": 9.0,
         "fats": 15.0,
-        "carbohydrates": 10.0
+        "carbohydrates": 10.0,
+        "weight": 100
     },
     {
         "name": "Пудинг",
         "calories": 150,
         "proteins": 4.0,
         "fats": 7.0,
-        "carbohydrates": 19.0
+        "carbohydrates": 19.0,
+        "weight": 100
     },
     {
         "name": "Омлет",
         "calories": 150,
         "proteins": 9.0,
         "fats": 11.0,
-        "carbohydrates": 2.0
+        "carbohydrates": 2.0,
+        "weight": 100
     },
     {
         "name": "Тушенка из говядины",
         "calories": 300,
         "proteins": 14.0,
         "fats": 26.0,
-        "carbohydrates": 0.0
+        "carbohydrates": 0.0,
+        "weight": 100
     },
     {
         "name": "Кулебяка",
         "calories": 290,
         "proteins": 8.0,
         "fats": 20.0,
-        "carbohydrates": 20.0
+        "carbohydrates": 20.0,
+        "weight": 100
     },
     {
         "name": "Творожная запеканка",
         "calories": 180,
         "proteins": 11.0,
         "fats": 9.0,
-        "carbohydrates": 14.0
+        "carbohydrates": 14.0,
+        "weight": 100
     },
     {
         "name": "Пшенная каша",
         "calories": 105,
         "proteins": 3.0,
         "fats": 1.0,
-        "carbohydrates": 22.0
+        "carbohydrates": 22.0,
+        "weight": 100
     },
     {
         "name": "Мясо по-французски",
         "calories": 210,
         "proteins": 12.0,
         "fats": 15.0,
-        "carbohydrates": 8.0
+        "carbohydrates": 8.0,
+        "weight": 100
     },
     {
         "name": "Сельдь под шубой",
         "calories": 190,
         "proteins": 3.0,
         "fats": 15.0,
-        "carbohydrates": 10.0
+        "carbohydrates": 10.0,
+        "weight": 100
     },
     {
         "name": "Капуста тушеная",
         "calories": 60,
         "proteins": 1.5,
         "fats": 2.0,
-        "carbohydrates": 8.0
+        "carbohydrates": 8.0,
+        "weight": 100
     },
     {
         "name": "Овсяная каша",
         "calories": 68,
         "proteins": 2.5,
         "fats": 1.5,
-        "carbohydrates": 11.5
+        "carbohydrates": 11.5,
+        "weight": 100
     },
     {
         "name": "Фаршированный перец",
         "calories": 95,
         "proteins": 6.0,
         "fats": 4.0,
-        "carbohydrates": 9.0
+        "carbohydrates": 9.0,
+        "weight": 100
     },
     {
         "name": "Морковный салат",
         "calories": 40,
         "proteins": 0.9,
         "fats": 2.0,
-        "carbohydrates": 5.8
+        "carbohydrates": 5.8,
+        "weight": 100
     },
     {
         "name": "Чахохбили",
         "calories": 140,
         "proteins": 15.0,
         "fats": 7.0,
-        "carbohydrates": 4.0
+        "carbohydrates": 4.0,
+        "weight": 100
     },
     {
         "name": "Харчо",
         "calories": 75,
         "proteins": 4.5,
         "fats": 3.0,
-        "carbohydrates": 7.0
+        "carbohydrates": 7.0,
+        "weight": 100
     },
     {
         "name": "Цезарь с курицей",
         "calories": 180,
         "proteins": 14.0,
         "fats": 9.0,
-        "carbohydrates": 10.0
+        "carbohydrates": 10.0,
+        "weight": 100
     },
     {
         "name": "Лагман",
         "calories": 120,
         "proteins": 7.0,
         "fats": 6.0,
-        "carbohydrates": 10.0
+        "carbohydrates": 10.0,
+        "weight": 100
     },
     {
         "name": "Сырный суп",
         "calories": 90,
         "proteins": 4.0,
         "fats": 5.0,
-        "carbohydrates": 8.0
+        "carbohydrates": 8.0,
+        "weight": 100
     },
     {
         "name": "Креветки вареные",
         "calories": 99,
         "proteins": 20.0,
         "fats": 1.5,
-        "carbohydrates": 0.0
+        "carbohydrates": 0.0,
+        "weight": 100
     },
     {
         "name": "Жареная рыба",
         "calories": 150,
         "proteins": 18.0,
         "fats": 8.0,
-        "carbohydrates": 0.0
+        "carbohydrates": 0.0,
+        "weight": 100
     },
     {
         "name": "Картофельное пюре",
         "calories": 85,
         "proteins": 2.0,
         "fats": 3.5,
-        "carbohydrates": 11.5
+        "carbohydrates": 11.5,
+        "weight": 100
     },
     {
         "name": "Суп с фрикадельками",
         "calories": 60,
         "proteins": 4.0,
         "fats": 3.0,
-        "carbohydrates": 5.0
+        "carbohydrates": 5.0,
+        "weight": 100
     },
     {
         "name": "Баклажаны тушеные",
         "calories": 45,
         "proteins": 1.5,
         "fats": 2.5,
-        "carbohydrates": 5.0
+        "carbohydrates": 5.0,
+        "weight": 100
     },
     {
         "name": "Зеленый салат",
         "calories": 20,
         "proteins": 1.0,
         "fats": 0.5,
-        "carbohydrates": 3.0
+        "carbohydrates": 3.0,
+        "weight": 100
     },
     {
         "name": "Творожники",
         "calories": 190,
         "proteins": 8.0,
         "fats": 10.0,
-        "carbohydrates": 16.0
+        "carbohydrates": 16.0,
+        "weight": 100
     },
     {
         "name": "Кабачки жареные",
         "calories": 60,
         "proteins": 1.2,
         "fats": 4.0,
-        "carbohydrates": 4.5
+        "carbohydrates": 4.5,
+        "weight": 100
     },
     {
         "name": "Рагу овощное",
         "calories": 55,
         "proteins": 1.5,
         "fats": 2.5,
-        "carbohydrates": 7.0
+        "carbohydrates": 7.0,
+        "weight": 100
     },
     {
         "name": "Фаршированные кабачки",
         "calories": 100,
         "proteins": 4.0,
         "fats": 6.0,
-        "carbohydrates": 8.0
+        "carbohydrates": 8.0,
+        "weight": 100
     },
     {
         "name": "Бефстроганов",
         "calories": 150,
         "proteins": 10.0,
         "fats": 10.0,
-        "carbohydrates": 4.0
+        "carbohydrates": 4.0,
+        "weight": 100
     },
     {
         "name": "Запеканка из картофеля",
         "calories": 120,
         "proteins": 5.0,
         "fats": 7.0,
-        "carbohydrates": 10.0
+        "carbohydrates": 10.0,
+        "weight": 100
     },
     {
         "name": "Овощной салат",
         "calories": 35,
         "proteins": 1.0,
         "fats": 1.5,
-        "carbohydrates": 4.5
+        "carbohydrates": 4.5,
+        "weight": 100
     },
     {
         "name": "Мясо тушеное",
         "calories": 130,
         "proteins": 12.0,
         "fats": 8.0,
-        "carbohydrates": 3.0
+        "carbohydrates": 3.0,
+        "weight": 100
     },
     {
         "name": "Фаршированные помидоры",
         "calories": 85,
         "proteins": 3.5,
         "fats": 5.0,
-        "carbohydrates": 7.0
+        "carbohydrates": 7.0,
+        "weight": 100
     },
     {
         "name": "Рыба под маринадом",
         "calories": 110,
         "proteins": 12.0,
         "fats": 6.0,
-        "carbohydrates": 3.0
+        "carbohydrates": 3.0,
+        "weight": 100
     },
     {
         "name": "Пирог с мясом",
         "calories": 250,
         "proteins": 10.0,
         "fats": 15.0,
-        "carbohydrates": 20.0
+        "carbohydrates": 20.0,
+        "weight": 100
     }
 ]

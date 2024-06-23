@@ -12,6 +12,7 @@ Food _$FoodFromJson(Map<String, dynamic> json) => Food(
       proteins: (json['proteins'] as num).toDouble(),
       fats: (json['fats'] as num).toDouble(),
       carbohydrates: (json['carbohydrates'] as num).toDouble(),
+      weight: (json['weight'] as num).toDouble(),
     );
 
 Map<String, dynamic> _$FoodToJson(Food instance) => <String, dynamic>{
@@ -20,4 +21,5 @@ Map<String, dynamic> _$FoodToJson(Food instance) => <String, dynamic>{
       'proteins': instance.proteins,
       'fats': instance.fats,
       'carbohydrates': instance.carbohydrates,
+      'weight': instance.weight,
     };

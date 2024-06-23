@@ -19,7 +19,7 @@ class MainApp extends StatelessWidget {
       child: MaterialApp(
         theme: ThemeData(
           primarySwatch: Colors.purple,
-          ),
+        ),
         title: 'Дневник здорового питания',
         home: Consumer<MainAppState>(
           builder: (context, mainAppState, child) {
@@ -35,7 +35,7 @@ class MainApp extends StatelessWidget {
   }
 }
 
-class MainAppState extends ChangeNotifier{
+class MainAppState extends ChangeNotifier {
   Person user = Person.empty();
   double kcal = 0.0;
   double proteins = 0.0;
@@ -48,23 +48,41 @@ class MainAppState extends ChangeNotifier{
   TextEditingController ageCtrl = TextEditingController();
   TextEditingController weightCtrl = TextEditingController();
   TextEditingController heightCtrl = TextEditingController();
-  void saveProfileDataFromTextFields(){
-    user.name = nameCtrl.text.trim() ;
-    user.gender = genderCtrl.text.trim();
+  void saveProfileDataFromTextFields() {
+    user.name = nameCtrl.text.trim();
+    String gender = genderCtrl.text.trim();
+    if (gender == "М"){
+      gender = 'Мужчина';
+    }
+    if (gender == "Ж"){
+      gender = "Женщина";
+    }
+    user.gender = gender;
     user.age = int.parse(ageCtrl.text.trim());
     user.weight = double.parse(weightCtrl.text.trim());
     user.height = double.parse(heightCtrl.text.trim());
     saveProfileDataToSharedPrefs();
     notifyListeners();
   }
-  void sendProfileDataToTextFields(){
-    nameCtrl.text = user.name;
-    genderCtrl.text = user.gender;
-    ageCtrl.text = user.age.toString();
-    weightCtrl.text = user.weight.toString();
-    heightCtrl.text = user.height.toString();
+
+  void sendProfileDataToTextFields() {
+    if (user.isEmpty()) {
+      nameCtrl.text = "";
+      genderCtrl.text = "";
+      ageCtrl.text = "";
+      weightCtrl.text = "";
+      heightCtrl.text = "";
+    } 
+    else {
+      nameCtrl.text = user.name;
+      genderCtrl.text = user.gender;
+      ageCtrl.text = user.age.toString();
+      weightCtrl.text = (user.weight % 1 == 0) ? user.weight.toStringAsFixed(0) : user.weight.toString();
+      heightCtrl.text = (user.height % 1 == 0) ? user.height.toStringAsFixed(0) : user.height.toString();
+    }
     notifyListeners();
   }
+
   void saveProfileDataToSharedPrefs() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('name', user.name);
@@ -73,6 +91,7 @@ class MainAppState extends ChangeNotifier{
     prefs.setDouble('weight', user.weight);
     prefs.setDouble('height', user.height);
   }
+
   Future<Person> readProfileDataFromSharedPrefs() async {
     final prefs = await SharedPreferences.getInstance();
     var name = prefs.getString('name');
@@ -80,38 +99,51 @@ class MainAppState extends ChangeNotifier{
     var age = prefs.getInt('age');
     var weight = prefs.getDouble('weight');
     var height = prefs.getDouble('height');
-    if (name == null || gender == null || age == null || weight == null || height == null){
+    if (name == null ||
+        gender == null ||
+        age == null ||
+        weight == null ||
+        height == null) {
       return Person.empty();
-    }
-    else{
-      return Person(name: name, gender: gender, age: age, weight: weight, height: height);
+    } else {
+      return Person(
+          name: name, gender: gender, age: age, weight: weight, height: height);
     }
   }
-  void calculateNorms(){
-    if (user.gender == 'Мужчина'){
-      kcal = (66.5 + (13.75 * user.weight) + (5.003 * user.height) - (6.775 * user.age)) * 1.375;
-    }
-    else {
-      kcal = (655.1 + (9.563 * user.weight) + (1.85 * user.height) - (4.676 * user.age)) * 1.375;
+
+  void calculateNorms() {
+    if (user.gender == 'Мужчина') {
+      kcal = (66.5 +
+              (13.75 * user.weight) +
+              (5.003 * user.height) -
+              (6.775 * user.age)) *
+          1.375;
+    } else {
+      kcal = (655.1 +
+              (9.563 * user.weight) +
+              (1.85 * user.height) -
+              (4.676 * user.age)) *
+          1.375;
     }
     proteins = kcal * 0.3;
     fats = kcal * 0.3;
     carbs = kcal * 0.4;
-    mealNorms["Завтрак"] = [kcal * 0.25, proteins * 0.3, fats * 0.3, carbs * 0,4];
-    mealNorms["Обед"] = [kcal * 0.4, proteins * 0.3, fats * 0.3, carbs * 0,4];
-    mealNorms["Ужин"] = [kcal * 0.35, proteins * 0.3, fats * 0.3, carbs * 0,4];
+    mealNorms["Завтрак"] = [kcal * 0.25, proteins * 0.3, fats * 0.3, carbs * 0.4];
+    mealNorms["Обед"] = [kcal * 0.4, proteins * 0.3, fats * 0.3, carbs * 0.4];
+    mealNorms["Ужин"] = [kcal * 0.35, proteins * 0.3, fats * 0.3, carbs * 0.4];
     dailyNorms["Калории"] = kcal;
     dailyNorms["Белки"] = proteins;
     dailyNorms["Жиры"] = fats;
     dailyNorms["Углеводы"] = carbs;
   }
+
   MainAppState() {
-    readProfileDataFromSharedPrefs().then((userData) {
-      user = userData;
-      notifyListeners();
-    });
-    calculateNorms();
+    _initializeProfile();
+  }
+  Future<void> _initializeProfile() async {
+    user = await readProfileDataFromSharedPrefs();
     sendProfileDataToTextFields();
+    calculateNorms();
     notifyListeners();
   }
 }

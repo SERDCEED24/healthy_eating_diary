@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:healthy_eating_diary/main.dart';
 import 'package:healthy_eating_diary/screens/fill_meal_screen.dart';
 import 'package:provider/provider.dart';
@@ -16,9 +15,13 @@ class DiaryScreen extends StatelessWidget {
           child: Column(
             children: [
               Mascot(),
-              SizedBox(height: 50,),
+              SizedBox(
+                height: 50,
+              ),
               StatusBars(),
-              SizedBox(height: 50,),
+              SizedBox(
+                height: 50,
+              ),
               Meals()
             ],
           ),
@@ -42,11 +45,17 @@ class StatusBars extends StatelessWidget {
         child: Column(
           children: [
             StatusRow(statusBarName: "Калории"),
-            SizedBox(height: 16.0,),
+            const SizedBox(
+              height: 16.0,
+            ),
             StatusRow(statusBarName: "Белки"),
-            SizedBox(height: 16.0,),
+            const SizedBox(
+              height: 16.0,
+            ),
             StatusRow(statusBarName: "Жиры"),
-            SizedBox(height: 16.0,),
+            const SizedBox(
+              height: 16.0,
+            ),
             StatusRow(statusBarName: "Углеводы"),
           ],
         ),
@@ -58,10 +67,7 @@ class StatusBars extends StatelessWidget {
 class StatusRow extends StatelessWidget {
   String statusBarName;
 
-  StatusRow({
-    super.key,
-    required this.statusBarName
-  });
+  StatusRow({super.key, required this.statusBarName});
 
   @override
   Widget build(BuildContext context) {
@@ -71,14 +77,14 @@ class StatusRow extends StatelessWidget {
         Text(
           '$statusBarName:',
           style: const TextStyle(
-                fontSize: 20,
-              ),
+            fontSize: 20,
+          ),
         ),
         Text(
           '   0/${appState.dailyNorms[statusBarName].round()}',
           style: const TextStyle(
-                fontSize: 20,
-              ),
+            fontSize: 20,
+          ),
         ),
       ],
     );
@@ -104,10 +110,7 @@ class Meals extends StatelessWidget {
 
 class GenMeal extends StatelessWidget {
   String mealName;
-  GenMeal({
-    super.key,
-    required this.mealName
-  });
+  GenMeal({super.key, required this.mealName});
 
   @override
   Widget build(BuildContext context) {
@@ -125,18 +128,15 @@ class GenMeal extends StatelessWidget {
               ),
             ),
             ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => FillMealScreen(),
-                  ),
-                );
-              }, 
-              child: const Icon(
-                Icons.add
-              )
-            )
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const FillMealScreen(),
+                    ),
+                  );
+                },
+                child: const Icon(Icons.add))
           ],
         ),
       ),

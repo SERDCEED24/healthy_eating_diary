@@ -127,8 +127,8 @@ class _FormsState extends State<Forms> {
             val: (value) {
               if (value == null ||
                   value.isEmpty ||
-                  !(value.trim() == 'Мужчина' || value.trim()  == 'Женщина')) {
-                return 'Ошибка! Введите "Мужчина" или "Женщина"!';
+                  !(value.trim() == 'Мужчина' || value.trim() == 'М' || value.trim()  == 'Женщина' || value.trim()  == 'Ж')) {
+                return 'Ошибка! Введите "Мужчина"/"М" или "Женщина"/"Ж"!';
               }
               return null;
             },
