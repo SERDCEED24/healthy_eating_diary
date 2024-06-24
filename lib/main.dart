@@ -89,6 +89,7 @@ class MainAppState extends ChangeNotifier {
 
   void saveDiaryDataToSharedPrefs() async {
     final prefs = await SharedPreferences.getInstance();
+    prefs.setInt('day', DateTime.now().day);
     prefs.setDouble('calories_breakfast', consumedCaloriesPerMeal[0]);
     prefs.setDouble('calories_lunch', consumedCaloriesPerMeal[1]);
     prefs.setDouble('calories_dinner', consumedCaloriesPerMeal[2]);
@@ -96,17 +97,45 @@ class MainAppState extends ChangeNotifier {
     prefs.setDouble('proteins_day', consumedSubstances[1]);
     prefs.setDouble('fats_day', consumedSubstances[2]);
     prefs.setDouble('carbs_day', consumedSubstances[3]);
+    prefs.setString('last_saved_date', DateTime.now().toIso8601String());
   }
 
   void readDiaryDataFromSharedPrefs() async {
     final prefs = await SharedPreferences.getInstance();
-    consumedCaloriesPerMeal[0] = prefs.getDouble('calories_breakfast')?? 0.0;
-    consumedCaloriesPerMeal[1] = prefs.getDouble('calories_lunch') ?? 0.0;
-    consumedCaloriesPerMeal[2] = prefs.getDouble('calories_dinner') ?? 0.0;
-    consumedSubstances[0] = prefs.getDouble('calories_day') ?? 0.0;
-    consumedSubstances[1] = prefs.getDouble('proteins_day') ?? 0.0;
-    consumedSubstances[2] = prefs.getDouble('fats_day') ?? 0.0;
-    consumedSubstances[3] = prefs.getDouble('carbs_day') ?? 0.0;
+
+    String? lastSavedDate = prefs.getString('last_saved_date');
+
+    if (lastSavedDate != null) {
+      DateTime lastDate = DateTime.parse(lastSavedDate);
+      DateTime currentDate = DateTime.now();
+      if (lastDate.year != currentDate.year || lastDate.month != currentDate.month || lastDate.day != currentDate.day) {
+        _resetDiaryData();
+      } 
+      else {
+        consumedCaloriesPerMeal[0] = prefs.getDouble('calories_breakfast') ?? 0.0;
+        consumedCaloriesPerMeal[1] = prefs.getDouble('calories_lunch') ?? 0.0;
+        consumedCaloriesPerMeal[2] = prefs.getDouble('calories_dinner') ?? 0.0;
+        consumedSubstances[0] = prefs.getDouble('calories_day') ?? 0.0;
+        consumedSubstances[1] = prefs.getDouble('proteins_day') ?? 0.0;
+        consumedSubstances[2] = prefs.getDouble('fats_day') ?? 0.0;
+        consumedSubstances[3] = prefs.getDouble('carbohydrates_day') ?? 0.0;
+      }
+    } 
+    else {
+      _resetDiaryData();
+    }
+
+    notifyListeners();
+  }
+
+  void _resetDiaryData() {
+    consumedCaloriesPerMeal[0] = 0.0;
+    consumedCaloriesPerMeal[1] = 0.0;
+    consumedCaloriesPerMeal[2] = 0.0;
+    consumedSubstances[0] = 0.0;
+    consumedSubstances[1] = 0.0;
+    consumedSubstances[2] = 0.0;
+    consumedSubstances[3] = 0.0;
   }
 
   void saveProfileDataToSharedPrefs() async {
