@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:healthy_eating_diary/main.dart';
+import 'package:healthy_eating_diary/screens/check_meal_screen.dart';
 import 'package:healthy_eating_diary/screens/fill_meal_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -126,20 +127,58 @@ class GenMeal extends StatelessWidget {
                 fontSize: 20,
               ),
             ),
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => FillMealScreen(mealIndex: appState.getMealIndex(mealName)),
-                    ),
-                  );
-                },
-                child: const Icon(Icons.add))
+            appState.isMealFilled(mealName) ? CheckMealButton(mealName: mealName,) : AddFoodButton(mealName: mealName) 
           ],
         ),
       ),
     );
+  }
+}
+
+class AddFoodButton extends StatelessWidget {
+  const AddFoodButton({
+    super.key,
+    required this.mealName,
+  });
+
+  final String mealName;
+
+  @override
+  Widget build(BuildContext context) {
+    var appState = context.watch<MainAppState>();
+    return ElevatedButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => FillMealScreen(mealIndex: appState.getMealIndex(mealName)),
+            ),
+          );
+        },
+        child: const Icon(Icons.add));
+  }
+}
+
+class CheckMealButton extends StatelessWidget {
+  const CheckMealButton({
+    super.key,
+    required this.mealName,
+  });
+
+  final String mealName;
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => CheckMealScreen(mealName: mealName),
+            ),
+          );
+        },
+        child: const Icon(Icons.check));
   }
 }
 

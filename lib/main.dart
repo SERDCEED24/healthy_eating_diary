@@ -5,6 +5,7 @@ import 'package:healthy_eating_diary/screens/registration_screen.dart';
 import 'package:healthy_eating_diary/models/person.dart';
 import 'package:healthy_eating_diary/models/food.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 import 'dart:async';
 
 void main() {
@@ -47,6 +48,7 @@ class MainAppState extends ChangeNotifier {
   var consumedSubstances = [0.0, 0.0, 0.0, 0.0];
   var consumedCaloriesPerMeal = [0.0, 0.0, 0.0];
   List<Food> selectedFoodList = [];
+  List<List<Food>> allSelectedFood = [[], [], []];
   TextEditingController nameCtrl = TextEditingController();
   TextEditingController genderCtrl = TextEditingController();
   TextEditingController ageCtrl = TextEditingController();
@@ -165,17 +167,27 @@ class MainAppState extends ChangeNotifier {
           name: name, gender: gender, age: age, weight: weight, height: height);
     }
   }
-  void updateSelectedFoods(List<Food> selectedFood){
+  void updateSelectedFoods(List<Food> selectedFood, int mealIndex){
     selectedFoodList = selectedFood;
+    allSelectedFood[mealIndex] = selectedFood;
   }
   void updateDiaryInformation(int mealIndex){
-    consumedSubstances[0] = consumedSubstances[0]! + selectedFoodList.fold(0, (sum, food) => sum + (food.calories / 100 * food.weight));
-    consumedSubstances[1] = consumedSubstances[1]! + selectedFoodList.fold(0, (sum, food) => sum + (food.proteins / 100 * food.weight));
-    consumedSubstances[2] = consumedSubstances[2]! + selectedFoodList.fold(0, (sum, food) => sum + (food.fats / 100 * food.weight));
-    consumedSubstances[3] = consumedSubstances[3]! + selectedFoodList.fold(0, (sum, food) => sum + (food.carbohydrates / 100 * food.weight));
-    consumedCaloriesPerMeal[mealIndex] = selectedFoodList.fold(0, (sum, food) => sum + (food.calories / 100 * food.weight));
-    saveDiaryDataToSharedPrefs();
-    notifyListeners();
+    if (selectedFoodList.isNotEmpty){
+      consumedSubstances[0] = consumedSubstances[0]! + selectedFoodList.fold(0, (sum, food) => sum + (food.calories / 100 * food.weight));
+      consumedSubstances[1] = consumedSubstances[1]! + selectedFoodList.fold(0, (sum, food) => sum + (food.proteins / 100 * food.weight));
+      consumedSubstances[2] = consumedSubstances[2]! + selectedFoodList.fold(0, (sum, food) => sum + (food.fats / 100 * food.weight));
+      consumedSubstances[3] = consumedSubstances[3]! + selectedFoodList.fold(0, (sum, food) => sum + (food.carbohydrates / 100 * food.weight));
+      consumedCaloriesPerMeal[mealIndex] = selectedFoodList.fold(0, (sum, food) => sum + (food.calories / 100 * food.weight));
+      saveDiaryDataToSharedPrefs();
+      saveAllSelectedMeals();
+      notifyListeners();
+    }
+  }
+  bool isMealFilled(String mealName){
+    if (consumedCaloriesPerMeal[getMealIndex(mealName)] > 0){
+      return true;
+    }
+    return false;
   }
   void calculateNorms() {
     if (user.gender == 'Мужчина') {
@@ -226,6 +238,32 @@ class MainAppState extends ChangeNotifier {
     }
     return 0;
   }
+  String convertMealsToJson(List<List<Food>> meals) {
+    List<List<Map<String, dynamic>>> jsonMeals = meals
+        .map((meal) => meal.map((food) => food.toJson()).toList())
+        .toList();
+    return jsonEncode(jsonMeals);
+  }
+  List<List<Food>> extractMealsFromJson(String jsonString) {
+    List<dynamic> jsonMeals = jsonDecode(jsonString);
+    return jsonMeals
+        .map((meal) =>
+            (meal as List<dynamic>).map((food) => Food.fromJson(food)).toList())
+        .toList();
+  }
+  Future<void> saveAllSelectedMeals() async {
+    final prefs = await SharedPreferences.getInstance();
+    String jsonString = convertMealsToJson(allSelectedFood);
+    await prefs.setString('allSelectedFood', jsonString);
+  }
+  Future<void> loadAllSelectedMeals() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? jsonString = prefs.getString('allSelectedFood');
+    if (jsonString != null) {
+      allSelectedFood = extractMealsFromJson(jsonString);
+      notifyListeners();
+    }
+  }
   MainAppState() {
     _initializeProfile();
     readDiaryDataFromSharedPrefs();
@@ -235,6 +273,7 @@ class MainAppState extends ChangeNotifier {
     user = await readProfileDataFromSharedPrefs();
     sendProfileDataToTextFields();
     calculateNorms();
+    loadAllSelectedMeals();
     notifyListeners();
   }
 }

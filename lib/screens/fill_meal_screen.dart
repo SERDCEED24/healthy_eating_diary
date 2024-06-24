@@ -79,7 +79,7 @@ class _ListOfDishesState extends State<ListOfDishes> {
         selectedFoodList.remove(food);
       });
     }
-    context.read<MainAppState>().updateSelectedFoods(selectedFoodList);
+    context.read<MainAppState>().updateSelectedFoods(selectedFoodList, widget.mealIndex);
   }
 
   void _toggleSelectionOn(Food food){
@@ -87,7 +87,7 @@ class _ListOfDishesState extends State<ListOfDishes> {
       setState(() {
         selectedFoodList.add(food);
       });
-      context.read<MainAppState>().updateSelectedFoods(selectedFoodList);
+      context.read<MainAppState>().updateSelectedFoods(selectedFoodList, widget.mealIndex);
     }
   }
 
