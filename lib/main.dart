@@ -3,6 +3,7 @@ import 'package:healthy_eating_diary/widgets/scaffold_with_panel.dart';
 import 'package:provider/provider.dart';
 import 'package:healthy_eating_diary/screens/registration_screen.dart';
 import 'package:healthy_eating_diary/models/person.dart';
+import 'package:healthy_eating_diary/models/food.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 
@@ -37,12 +38,15 @@ class MainApp extends StatelessWidget {
 
 class MainAppState extends ChangeNotifier {
   Person user = Person.empty();
-  double kcal = 0.0;
-  double proteins = 0.0;
-  double carbs = 0.0;
-  double fats = 0.0;
+  double kcalNormal = 0.0;
+  double proteinsNormal = 0.0;
+  double carbsNormal = 0.0;
+  double fatsNormal = 0.0;
   var dailyNorms = {};
   var mealNorms = {};
+  var consumedSubstances = [0.0, 0.0, 0.0, 0.0];
+  var consumedCaloriesPerMeal = [0.0, 0.0, 0.0];
+  List<Food> selectedFoodList = [];
   TextEditingController nameCtrl = TextEditingController();
   TextEditingController genderCtrl = TextEditingController();
   TextEditingController ageCtrl = TextEditingController();
@@ -83,6 +87,28 @@ class MainAppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void saveDiaryDataToSharedPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setDouble('calories_breakfast', consumedCaloriesPerMeal[0]);
+    prefs.setDouble('calories_lunch', consumedCaloriesPerMeal[1]);
+    prefs.setDouble('calories_dinner', consumedCaloriesPerMeal[2]);
+    prefs.setDouble('calories_day', consumedSubstances[0]);
+    prefs.setDouble('proteins_day', consumedSubstances[1]);
+    prefs.setDouble('fats_day', consumedSubstances[2]);
+    prefs.setDouble('carbs_day', consumedSubstances[3]);
+  }
+
+  void readDiaryDataFromSharedPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    consumedCaloriesPerMeal[0] = prefs.getDouble('calories_breakfast')?? 0.0;
+    consumedCaloriesPerMeal[1] = prefs.getDouble('calories_lunch') ?? 0.0;
+    consumedCaloriesPerMeal[2] = prefs.getDouble('calories_dinner') ?? 0.0;
+    consumedSubstances[0] = prefs.getDouble('calories_day') ?? 0.0;
+    consumedSubstances[1] = prefs.getDouble('proteins_day') ?? 0.0;
+    consumedSubstances[2] = prefs.getDouble('fats_day') ?? 0.0;
+    consumedSubstances[3] = prefs.getDouble('carbs_day') ?? 0.0;
+  }
+
   void saveProfileDataToSharedPrefs() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('name', user.name);
@@ -110,35 +136,71 @@ class MainAppState extends ChangeNotifier {
           name: name, gender: gender, age: age, weight: weight, height: height);
     }
   }
-
+  void updateSelectedFoods(List<Food> selectedFood){
+    selectedFoodList = selectedFood;
+  }
+  void updateDiaryInformation(int mealIndex){
+    consumedSubstances[0] = consumedSubstances[0]! + selectedFoodList.fold(0, (sum, food) => sum + (food.calories / 100 * food.weight));
+    consumedSubstances[1] = consumedSubstances[1]! + selectedFoodList.fold(0, (sum, food) => sum + (food.proteins / 100 * food.weight));
+    consumedSubstances[2] = consumedSubstances[2]! + selectedFoodList.fold(0, (sum, food) => sum + (food.fats / 100 * food.weight));
+    consumedSubstances[3] = consumedSubstances[3]! + selectedFoodList.fold(0, (sum, food) => sum + (food.carbohydrates / 100 * food.weight));
+    consumedCaloriesPerMeal[mealIndex] = selectedFoodList.fold(0, (sum, food) => sum + (food.calories / 100 * food.weight));
+    saveDiaryDataToSharedPrefs();
+    notifyListeners();
+  }
   void calculateNorms() {
     if (user.gender == 'Мужчина') {
-      kcal = (66.5 +
+      kcalNormal = (66.5 +
               (13.75 * user.weight) +
               (5.003 * user.height) -
               (6.775 * user.age)) *
           1.375;
     } else {
-      kcal = (655.1 +
+      kcalNormal = (655.1 +
               (9.563 * user.weight) +
               (1.85 * user.height) -
               (4.676 * user.age)) *
           1.375;
     }
-    proteins = kcal * 0.3;
-    fats = kcal * 0.3;
-    carbs = kcal * 0.4;
-    mealNorms["Завтрак"] = [kcal * 0.25, proteins * 0.3, fats * 0.3, carbs * 0.4];
-    mealNorms["Обед"] = [kcal * 0.4, proteins * 0.3, fats * 0.3, carbs * 0.4];
-    mealNorms["Ужин"] = [kcal * 0.35, proteins * 0.3, fats * 0.3, carbs * 0.4];
-    dailyNorms["Калории"] = kcal;
-    dailyNorms["Белки"] = proteins;
-    dailyNorms["Жиры"] = fats;
-    dailyNorms["Углеводы"] = carbs;
+    proteinsNormal = kcalNormal * 0.3 / 4;
+    fatsNormal = kcalNormal * 0.3 / 9;
+    carbsNormal = kcalNormal * 0.4 / 4;
+    mealNorms["Завтрак"] = kcalNormal * 0.25;
+    mealNorms["Обед"] = kcalNormal * 0.4;
+    mealNorms["Ужин"] = kcalNormal * 0.35;
+    dailyNorms["Калории"] = kcalNormal;
+    dailyNorms["Белки"] = proteinsNormal;
+    dailyNorms["Жиры"] = fatsNormal;
+    dailyNorms["Углеводы"] = carbsNormal;
   }
-
+  int getMealIndex(String mealName){
+    switch (mealName){
+      case "Завтрак":
+        return 0;
+      case "Обед":
+        return 1;
+      case "Ужин":
+        return 2;
+    }
+    return 0;
+  }
+  int getSubstanceIndex(String substanceName){
+    switch (substanceName){
+      case "Калории":
+        return 0;
+      case "Белки":
+        return 1;
+      case "Жиры":
+        return 2;
+      case "Углеводы":
+        return 3;
+    }
+    return 0;
+  }
   MainAppState() {
     _initializeProfile();
+    readDiaryDataFromSharedPrefs();
+    notifyListeners();
   }
   Future<void> _initializeProfile() async {
     user = await readProfileDataFromSharedPrefs();

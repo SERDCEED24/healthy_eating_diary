@@ -6,7 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:healthy_eating_diary/main.dart';
 
 class FillMealScreen extends StatelessWidget {
-  const FillMealScreen({super.key});
+  final int mealIndex;
+  const FillMealScreen({super.key, required this.mealIndex});
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +23,8 @@ class FillMealScreen extends StatelessWidget {
                   scale: 3,
                 ),
                 const SelectionHeader(),
-                const ListOfDishes(),
-                const FinishSelectingButton(),
+                ListOfDishes(mealIndex: mealIndex,),
+                FinishSelectingButton(mealIndex: mealIndex,),
               ],
             ),
           ),
@@ -34,8 +35,10 @@ class FillMealScreen extends StatelessWidget {
 }
 
 class ListOfDishes extends StatefulWidget {
+  final int mealIndex;
   const ListOfDishes({
     super.key,
+    required this.mealIndex
   });
 
   @override
@@ -75,6 +78,16 @@ class _ListOfDishesState extends State<ListOfDishes> {
       setState(() {
         selectedFoodList.remove(food);
       });
+    }
+    context.read<MainAppState>().updateSelectedFoods(selectedFoodList);
+  }
+
+  void _toggleSelectionOn(Food food){
+    if (!selectedFoodList.contains(food)) {
+      setState(() {
+        selectedFoodList.add(food);
+      });
+      context.read<MainAppState>().updateSelectedFoods(selectedFoodList);
     }
   }
 
@@ -156,12 +169,14 @@ class _ListOfDishesState extends State<ListOfDishes> {
                               IconButton(
                                 icon: const Icon(Icons.remove),
                                 onPressed: () {
+                                  _toggleSelectionOn(food);
                                   _decrementWeight(food);
                                 },
                               ),
                               IconButton(
                                 icon: const Icon(Icons.add),
                                 onPressed: () {
+                                  _toggleSelectionOn(food);
                                   _incrementWeight(food);
                                 },
                               ),
@@ -206,7 +221,8 @@ class SelectionHeader extends StatelessWidget {
 }
 
 class FinishSelectingButton extends StatelessWidget {
-  const FinishSelectingButton({super.key});
+  final int mealIndex;
+  const FinishSelectingButton({super.key, required this.mealIndex});
 
   @override
   Widget build(BuildContext context) {
@@ -217,7 +233,7 @@ class FinishSelectingButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () {
           if (true) {
-            appState.saveProfileDataFromTextFields();
+            appState.updateDiaryInformation(mealIndex);
             Navigator.pop(context);
           }
         },

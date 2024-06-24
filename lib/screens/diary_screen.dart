@@ -81,7 +81,7 @@ class StatusRow extends StatelessWidget {
           ),
         ),
         Text(
-          '   0/${appState.dailyNorms[statusBarName].round()}',
+          '   ${appState.consumedSubstances[appState.getSubstanceIndex(statusBarName)].round()}/${appState.dailyNorms[statusBarName].round()}',
           style: const TextStyle(
             fontSize: 20,
           ),
@@ -111,7 +111,6 @@ class Meals extends StatelessWidget {
 class GenMeal extends StatelessWidget {
   String mealName;
   GenMeal({super.key, required this.mealName});
-
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MainAppState>();
@@ -122,7 +121,7 @@ class GenMeal extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              "$mealName    0/${appState.mealNorms[mealName][0].round()}",
+              "$mealName    ${appState.consumedCaloriesPerMeal[appState.getMealIndex(mealName)].round()}/${appState.mealNorms[mealName].round()}",
               style: const TextStyle(
                 fontSize: 20,
               ),
@@ -132,7 +131,7 @@ class GenMeal extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const FillMealScreen(),
+                      builder: (context) => FillMealScreen(mealIndex: appState.getMealIndex(mealName)),
                     ),
                   );
                 },
