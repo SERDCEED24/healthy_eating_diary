@@ -173,10 +173,10 @@ class MainAppState extends ChangeNotifier {
   }
   void updateDiaryInformation(int mealIndex){
     if (selectedFoodList.isNotEmpty){
-      consumedSubstances[0] = consumedSubstances[0]! + selectedFoodList.fold(0, (sum, food) => sum + (food.calories / 100 * food.weight));
-      consumedSubstances[1] = consumedSubstances[1]! + selectedFoodList.fold(0, (sum, food) => sum + (food.proteins / 100 * food.weight));
-      consumedSubstances[2] = consumedSubstances[2]! + selectedFoodList.fold(0, (sum, food) => sum + (food.fats / 100 * food.weight));
-      consumedSubstances[3] = consumedSubstances[3]! + selectedFoodList.fold(0, (sum, food) => sum + (food.carbohydrates / 100 * food.weight));
+      consumedSubstances[0] = consumedSubstances[0] + selectedFoodList.fold(0, (sum, food) => sum + (food.calories / 100 * food.weight));
+      consumedSubstances[1] = consumedSubstances[1] + selectedFoodList.fold(0, (sum, food) => sum + (food.proteins / 100 * food.weight));
+      consumedSubstances[2] = consumedSubstances[2] + selectedFoodList.fold(0, (sum, food) => sum + (food.fats / 100 * food.weight));
+      consumedSubstances[3] = consumedSubstances[3] + selectedFoodList.fold(0, (sum, food) => sum + (food.carbohydrates / 100 * food.weight));
       consumedCaloriesPerMeal[mealIndex] = selectedFoodList.fold(0, (sum, food) => sum + (food.calories / 100 * food.weight));
       saveDiaryDataToSharedPrefs();
       saveAllSelectedMeals();

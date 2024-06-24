@@ -12,6 +12,7 @@ dependencies:
   provider: ^6.1.2
   json_annotation: ^4.9.0
   shared_preferences: ^2.2.3 
+  fl_chart: ^0.68.0
 
 dev_dependencies:
   flutter_test:
