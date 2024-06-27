@@ -45,8 +45,11 @@ class MainAppState extends ChangeNotifier {
   double proteinsNormal = 0.0;
   double carbsNormal = 0.0;
   double fatsNormal = 0.0;
+  int chartSubstanceIndex = 0;
   var dailyNorms = {};
   var mealNorms = {};
+  List<double> chartPointsReal = []; 
+  List<double> chartPointsNorm = []; 
   var consumedSubstances = [0.0, 0.0, 0.0, 0.0];
   var consumedCaloriesPerMeal = [0.0, 0.0, 0.0];
   List<Food> selectedFoodList = [];
@@ -88,6 +91,49 @@ class MainAppState extends ChangeNotifier {
       ageCtrl.text = user.age.toString();
       weightCtrl.text = (user.weight % 1 == 0) ? user.weight.toStringAsFixed(0) : user.weight.toString();
       heightCtrl.text = (user.height % 1 == 0) ? user.height.toStringAsFixed(0) : user.height.toString();
+    }
+    notifyListeners();
+  }
+
+  void changeChartValues(int substanceIndex){
+    chartSubstanceIndex = substanceIndex;
+    
+    var caloriesReal = List<double>.filled(7, 0.0);
+    var caloriesNorms = List<double>.filled(7, 0.0);
+    var proteinsReal = List<double>.filled(7, 0.0);
+    var proteinsNorms = List<double>.filled(7, 0.0);
+    var fatsReal = List<double>.filled(7, 0.0);
+    var fatsNorms = List<double>.filled(7, 0.0);
+    var carbsReal = List<double>.filled(7, 0.0);
+    var carbsNorms = List<double>.filled(7, 0.0);
+
+    for (String dateStr in reports.keys) {
+      DateTime date = DateFormat('dd.MM.yyyy').parse(dateStr);
+      int dayIndex = date.weekday - 1;
+      FoodReport report = reports[dateStr]!;
+      caloriesReal[dayIndex] = report.calories;
+      caloriesNorms[dayIndex] = report.caloriesNormal;
+      proteinsReal[dayIndex] = report.proteins;
+      proteinsNorms[dayIndex] = report.proteinsNormal;
+      fatsReal[dayIndex] = report.fats;
+      fatsNorms[dayIndex] = report.fatsNormal;
+      carbsReal[dayIndex] = report.carbohydrates;
+      carbsNorms[dayIndex] = report.carbohydratesNormal;
+    }
+
+    switch (substanceIndex){
+      case 0:
+        chartPointsNorm = caloriesNorms;
+        chartPointsReal = caloriesReal;
+      case 1:
+        chartPointsNorm = proteinsNorms;
+        chartPointsReal = proteinsReal;
+      case 2:
+        chartPointsNorm = fatsNorms;
+        chartPointsReal = fatsReal;
+      case 3:
+        chartPointsNorm = carbsNorms;
+        chartPointsReal = carbsReal;
     }
     notifyListeners();
   }
@@ -142,6 +188,9 @@ class MainAppState extends ChangeNotifier {
     DateTime now = DateTime.now();
     DateFormat dateFormat = DateFormat("dd.MM.yyyy");
     String nowStr = dateFormat.format(now);
+    if (reports.length == 7){
+      reports.clear();
+    }
     reports[nowStr] = FoodReport(calories: consumedSubstances[0], 
                                  proteins: consumedSubstances[1], 
                                  fats: consumedSubstances[2],

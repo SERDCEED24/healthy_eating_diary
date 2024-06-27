@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:healthy_eating_diary/main.dart';
 import 'package:healthy_eating_diary/screens/diary_screen.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:provider/provider.dart';
 
 //import 'package:provider/provider.dart';
 //import 'package:healthy_eating_diary/main.dart';
@@ -36,9 +38,10 @@ class Charts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MainAppState>();
     return Column(
       children: [
-        OneChart(),
+        OneChart(real: appState.chartPointsReal, norm: appState.chartPointsNorm, substanceIndex: appState.chartSubstanceIndex,),
         const ChartsButtons(),
       ],
     );
@@ -46,39 +49,87 @@ class Charts extends StatelessWidget {
 }
 
 class OneChart extends StatelessWidget {
-  final List<double> realCalories = [2000, 1800, 2200, 2100, 2500, 2400, 2300];
-  final List<double> normCalories = [2000, 2000, 2000, 2000, 2000, 2000, 2000];
+  final List<double> real;
+  final List<double> norm;
+  final int substanceIndex; 
+
+  const OneChart({super.key, required this.real, required this.norm, required this.substanceIndex});
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 1.7,
-      child: BarChart(
-        BarChartData(
-          alignment: BarChartAlignment.spaceEvenly,
-          maxY: 3000,
-          minY: 0,
-          barGroups: _createBarGroups(),
-          titlesData: _buildTitlesData(),
-          borderData: FlBorderData(show: false),
-          gridData: const FlGridData(show: false),
+    double maxYValue = 3000;
+    switch (substanceIndex) {
+      case 1:
+        maxYValue = maxYValue * 0.075;
+        break;
+      case 2:
+        maxYValue = maxYValue * 0.03;
+        break;
+      case 3:
+        maxYValue = maxYValue * 0.1;
+        break;
+    }
+    double stepSize = maxYValue / 12;  // Step size for grid lines and labels
+
+    return SizedBox(
+      height: 400,
+      child: Column(
+        children: [
+          Expanded(
+            child: AspectRatio(
+              aspectRatio: 1.7,
+              child: BarChart(
+                BarChartData(
+                  alignment: BarChartAlignment.spaceEvenly,
+                  maxY: maxYValue,
+                  minY: 0,
+                  barGroups: _createBarGroups(),
+                  titlesData: _buildTitlesData(stepSize),
+                  borderData: FlBorderData(show: false),
+                  gridData: FlGridData(
+                    show: true,
+                    drawVerticalLine: false,  // No vertical lines
+                    drawHorizontalLine: true,  // Only horizontal lines
+                    horizontalInterval: stepSize,
+                    getDrawingHorizontalLine: (value) {
+                      return const FlLine(
+                        color: Colors.grey,
+                        strokeWidth: 1,
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
           ),
-        ),
-      );
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildLegendItem(Colors.deepPurple[100], 'Норма'),
+                const SizedBox(width: 20),
+                _buildLegendItem(Colors.deepPurpleAccent, 'Реальность'),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   List<BarChartGroupData> _createBarGroups() {
-    return List.generate(realCalories.length, (index) {
+    return List.generate(real.length, (index) {
       return BarChartGroupData(
         x: index,
         barRods: [
           BarChartRodData(
-            toY: normCalories[index],
+            toY: norm[index],
             color: Colors.deepPurple[100],
             width: 15,
           ),
           BarChartRodData(
-            toY: realCalories[index],
+            toY: real[index],
             color: Colors.deepPurpleAccent,
             width: 15,
           ),
@@ -88,7 +139,7 @@ class OneChart extends StatelessWidget {
     });
   }
 
-  FlTitlesData _buildTitlesData() {
+  FlTitlesData _buildTitlesData(double stepSize) {
     return FlTitlesData(
       bottomTitles: AxisTitles(
         sideTitles: SideTitles(
@@ -116,12 +167,30 @@ class OneChart extends StatelessWidget {
           reservedSize: 40,
         ),
       ),
-      leftTitles: const AxisTitles(
+      leftTitles: AxisTitles(
         sideTitles: SideTitles(
           showTitles: true,
           reservedSize: 40,
+          interval: stepSize,
+          getTitlesWidget: (value, meta) {
+            return Text(value.toStringAsFixed(0));
+          },
         ),
       ),
+    );
+  }
+
+  Widget _buildLegendItem(Color? color, String text) {
+    return Row(
+      children: [
+        Container(
+          width: 16,
+          height: 16,
+          color: color,
+        ),
+        const SizedBox(width: 8),
+        Text(text),
+      ],
     );
   }
 }
@@ -133,13 +202,14 @@ class ChartsButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Row(
+    var appState = context.watch<MainAppState>();
+    return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
               child: ElevatedButton(
-                onPressed: null,
-                child: Text(
+                onPressed: () => {appState.changeChartValues(0)},
+                child: const Text(
                   'К',
                   style: TextStyle(fontSize: 18),
                   textAlign: TextAlign.center,
@@ -148,8 +218,8 @@ class ChartsButtons extends StatelessWidget {
             ),
             Expanded(
               child: ElevatedButton(
-                onPressed: null,
-                child: Text(
+                onPressed: () => {appState.changeChartValues(1)},
+                child: const Text(
                   'Б',
                   style: TextStyle(fontSize: 18),
                   textAlign: TextAlign.center,
@@ -158,8 +228,8 @@ class ChartsButtons extends StatelessWidget {
             ),
             Expanded(
               child: ElevatedButton(
-                onPressed: null,
-                child: Text(
+                onPressed: () => {appState.changeChartValues(2)},
+                child: const Text(
                   'Ж',
                   style: TextStyle(fontSize: 18),
                   textAlign: TextAlign.center,
@@ -168,8 +238,8 @@ class ChartsButtons extends StatelessWidget {
             ),
             Expanded(
               child: ElevatedButton(
-                onPressed: null,
-                child: Text(
+                onPressed: () => {appState.changeChartValues(3)},
+                child: const Text(
                   'У',
                   style: TextStyle(fontSize: 18),
                   textAlign: TextAlign.center,
