@@ -24,12 +24,29 @@ class FillMealScreen extends StatelessWidget {
                 ),
                 const SelectionHeader(),
                 ListOfDishes(mealIndex: mealIndex,),
+                FillingSummary(),
                 FinishSelectingButton(mealIndex: mealIndex,),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+}
+
+class FillingSummary extends StatelessWidget {
+  const FillingSummary({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    var appState = context.watch<MainAppState>();
+    var substanceList = appState.getKbzhuList();
+    return Text(
+      'Общее кол-во КБЖУ: ${substanceList[0].round()}, ${substanceList[1].round()}, ${substanceList[2].round()}, ${substanceList[3].round()}',
+      style: TextStyle(fontSize: 20),
     );
   }
 }
@@ -87,20 +104,24 @@ class _ListOfDishesState extends State<ListOfDishes> {
       setState(() {
         selectedFoodList.add(food);
       });
-      context.read<MainAppState>().updateSelectedFoods(selectedFoodList, widget.mealIndex);
     }
+    else{
+      selectedFoodList.removeWhere((item) => item.name == food.name);
+      selectedFoodList.add(food);
+    }
+    context.read<MainAppState>().updateSelectedFoods(selectedFoodList, widget.mealIndex);
   }
 
   void _incrementWeight(Food food) {
     setState(() {
-      food.weight += 10;
+      food.weight += 20;
     });
   }
 
   void _decrementWeight(Food food) {
     if (food.weight > 50) { 
       setState(() {
-        food.weight -= 10;
+        food.weight -= 20;
       });
     }
   }

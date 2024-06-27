@@ -122,11 +122,28 @@ class GenMeal extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              "$mealName    ${appState.consumedCaloriesPerMeal[appState.getMealIndex(mealName)].round()}/${appState.mealNorms[mealName].round()}",
-              style: const TextStyle(
-                fontSize: 20,
+            RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: mealName,
+                    style: const TextStyle(
+                      fontSize: 29,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                    ),
+                  ),
+                  TextSpan(
+                    text: "\nФакт: ${appState.consumedCaloriesPerMeal[appState.getMealIndex(mealName)].round()}  Цель: ${appState.mealNorms[mealName].round()}",
+                    style: const TextStyle(
+                      fontSize: 26,
+                      fontWeight: FontWeight.normal,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
               ),
+              textAlign: TextAlign.start,
             ),
             appState.isMealFilled(mealName) ? CheckMealButton(mealName: mealName,) : AddFoodButton(mealName: mealName) 
           ],
@@ -179,7 +196,7 @@ class CheckMealButton extends StatelessWidget {
             ),
           );
         },
-        child: const Icon(Icons.check));
+        child: const Icon(Icons.chevron_right));
   }
 }
 
@@ -197,7 +214,7 @@ class Mascot extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         SizedBox(
-          width: 245,
+          width: 220,
           height: 180,
           child: Card(
             child: Center(

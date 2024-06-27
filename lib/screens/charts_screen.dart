@@ -22,12 +22,31 @@ class ChartsScreen extends StatelessWidget {
               SizedBox(
                 height: 50,
               ),
+              ChartHeader(),
               Charts(),
             ],
           ),
         ),
       ),
     );
+  }
+}
+
+class ChartHeader extends StatelessWidget {
+  const ChartHeader({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    var appState = context.watch<MainAppState>();
+    var headers = ["Калории", "Белки", "Жиры", "Углеводы"];
+    return Text(
+            "${headers[appState.chartSubstanceIndex]}:",
+            style: const TextStyle(
+               fontSize: 22,
+            ),
+           );
   }
 }
 
@@ -51,13 +70,14 @@ class Charts extends StatelessWidget {
 class OneChart extends StatelessWidget {
   final List<double> real;
   final List<double> norm;
-  final int substanceIndex; 
+  final int substanceIndex;
 
   const OneChart({super.key, required this.real, required this.norm, required this.substanceIndex});
 
   @override
   Widget build(BuildContext context) {
     double maxYValue = 3000;
+
     switch (substanceIndex) {
       case 1:
         maxYValue = maxYValue * 0.075;
@@ -69,7 +89,9 @@ class OneChart extends StatelessWidget {
         maxYValue = maxYValue * 0.1;
         break;
     }
-    double stepSize = maxYValue / 12;  // Step size for grid lines and labels
+
+    maxYValue = _calculateMaxYValue(real, norm, maxYValue);
+    double stepSize = maxYValue / 12;
 
     return SizedBox(
       height: 400,
@@ -81,15 +103,15 @@ class OneChart extends StatelessWidget {
               child: BarChart(
                 BarChartData(
                   alignment: BarChartAlignment.spaceEvenly,
-                  maxY: maxYValue,
+                  maxY: maxYValue + (maxYValue * 0.05), 
                   minY: 0,
                   barGroups: _createBarGroups(),
                   titlesData: _buildTitlesData(stepSize),
                   borderData: FlBorderData(show: false),
                   gridData: FlGridData(
                     show: true,
-                    drawVerticalLine: false,  // No vertical lines
-                    drawHorizontalLine: true,  // Only horizontal lines
+                    drawVerticalLine: false,  
+                    drawHorizontalLine: true, 
                     horizontalInterval: stepSize,
                     getDrawingHorizontalLine: (value) {
                       return const FlLine(
@@ -118,6 +140,14 @@ class OneChart extends StatelessWidget {
     );
   }
 
+  double _calculateMaxYValue(List<double> real, List<double> norm, double maxYValue) {
+    double maxReal = real.isNotEmpty ? real.reduce((a, b) => a > b ? a : b) : 0;
+    double maxNorm = norm.isNotEmpty ? norm.reduce((a, b) => a > b ? a : b) : 0;
+    double calculatedMax = (maxReal > maxNorm ? maxReal : maxNorm) * 1.2;
+
+    return calculatedMax > 0 ? calculatedMax : maxYValue;
+  }
+
   List<BarChartGroupData> _createBarGroups() {
     return List.generate(real.length, (index) {
       return BarChartGroupData(
@@ -140,6 +170,8 @@ class OneChart extends StatelessWidget {
   }
 
   FlTitlesData _buildTitlesData(double stepSize) {
+    stepSize = stepSize > 0 ? stepSize : 1;
+
     return FlTitlesData(
       bottomTitles: AxisTitles(
         sideTitles: SideTitles(
@@ -169,12 +201,17 @@ class OneChart extends StatelessWidget {
       ),
       leftTitles: AxisTitles(
         sideTitles: SideTitles(
-          showTitles: true,
+          showTitles: true,  
           reservedSize: 40,
           interval: stepSize,
           getTitlesWidget: (value, meta) {
             return Text(value.toStringAsFixed(0));
           },
+        ),
+      ),
+      rightTitles: const AxisTitles(
+        sideTitles: SideTitles(
+          showTitles: false,  
         ),
       ),
     );
@@ -194,6 +231,9 @@ class OneChart extends StatelessWidget {
     );
   }
 }
+
+
+
 
 class ChartsButtons extends StatelessWidget {
   const ChartsButtons({

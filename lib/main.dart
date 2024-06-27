@@ -48,8 +48,8 @@ class MainAppState extends ChangeNotifier {
   int chartSubstanceIndex = 0;
   var dailyNorms = {};
   var mealNorms = {};
-  List<double> chartPointsReal = []; 
-  List<double> chartPointsNorm = []; 
+  List<double> chartPointsReal = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]; 
+  List<double> chartPointsNorm = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]; 
   var consumedSubstances = [0.0, 0.0, 0.0, 0.0];
   var consumedCaloriesPerMeal = [0.0, 0.0, 0.0];
   List<Food> selectedFoodList = [];
@@ -60,6 +60,7 @@ class MainAppState extends ChangeNotifier {
   TextEditingController ageCtrl = TextEditingController();
   TextEditingController weightCtrl = TextEditingController();
   TextEditingController heightCtrl = TextEditingController();
+
   void saveProfileDataFromTextFields() {
     user.name = nameCtrl.text.trim();
     String gender = genderCtrl.text.trim();
@@ -76,6 +77,22 @@ class MainAppState extends ChangeNotifier {
     saveProfileDataToSharedPrefs();
     notifyListeners();
   }
+
+  List<double> getKbzhuList() {
+  double totalCalories = 0;
+  double totalProteins = 0;
+  double totalFats = 0;
+  double totalCarbohydrates = 0;
+
+  for (var food in selectedFoodList) {
+    totalCalories += food.calories * food.weight / 100;
+    totalProteins += food.proteins * food.weight / 100;
+    totalFats += food.fats * food.weight / 100;
+    totalCarbohydrates += food.carbohydrates * food.weight / 100;
+  }
+
+  return [totalCalories, totalProteins, totalFats, totalCarbohydrates];
+}
 
   void sendProfileDataToTextFields() {
     if (user.isEmpty()) {
@@ -121,20 +138,25 @@ class MainAppState extends ChangeNotifier {
       carbsNorms[dayIndex] = report.carbohydratesNormal;
     }
 
-    switch (substanceIndex){
+    switch (substanceIndex) {
       case 0:
         chartPointsNorm = caloriesNorms;
         chartPointsReal = caloriesReal;
+        break;
       case 1:
         chartPointsNorm = proteinsNorms;
         chartPointsReal = proteinsReal;
+        break;
       case 2:
         chartPointsNorm = fatsNorms;
         chartPointsReal = fatsReal;
+        break;
       case 3:
         chartPointsNorm = carbsNorms;
         chartPointsReal = carbsReal;
+        break;
     }
+
     notifyListeners();
   }
 
@@ -250,6 +272,7 @@ class MainAppState extends ChangeNotifier {
   void updateSelectedFoods(List<Food> selectedFood, int mealIndex){
     selectedFoodList = selectedFood;
     allSelectedFood[mealIndex] = selectedFood;
+    notifyListeners();
   }
   void updateDiaryInformation(int mealIndex){
     if (selectedFoodList.isNotEmpty){
@@ -262,6 +285,7 @@ class MainAppState extends ChangeNotifier {
       saveAllSelectedMeals();
       addOrReplaceReport();
       saveReportsToJson();
+      changeChartValues(0);
       notifyListeners();
     }
   }
@@ -350,6 +374,7 @@ class MainAppState extends ChangeNotifier {
     _initializeProfile();
     readDiaryDataFromSharedPrefs();
     loadReportsFromJson();
+    changeChartValues(0);
     notifyListeners();
   }
   Future<void> _initializeProfile() async {
