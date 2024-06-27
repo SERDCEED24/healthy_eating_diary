@@ -267,7 +267,7 @@ class MascotForCharts extends StatelessWidget {
           child: Card(
             child: Center(
               child: Text(
-                'Норма по калориям выполнена на 84%!',
+                'Норма по калориям выполнена на 34%!',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 20,
@@ -277,7 +277,7 @@ class MascotForCharts extends StatelessWidget {
           ),
         ),
         Image.asset(
-          'assets/images/happy.png',
+          'assets/images/advice.png',
           scale: 3.0,
         ),
       ],

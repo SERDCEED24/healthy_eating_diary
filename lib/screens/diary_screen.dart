@@ -3,6 +3,7 @@ import 'package:healthy_eating_diary/main.dart';
 import 'package:healthy_eating_diary/screens/check_meal_screen.dart';
 import 'package:healthy_eating_diary/screens/fill_meal_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:healthy_eating_diary/widgets/message.dart';
 
 class DiaryScreen extends StatelessWidget {
   const DiaryScreen({super.key});
@@ -189,26 +190,29 @@ class Mascot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MainAppState>();
+    var message = Message(appState);
+    
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const SizedBox(
-          width: 250,
-          height: 130,
+        SizedBox(
+          width: 245,
+          height: 180,
           child: Card(
             child: Center(
               child: Text(
-                'Совет дня: ешьте больше каши!',
+                message.createMessage(),
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 25,
+                style: const TextStyle(
+                  fontSize: 18,
                 ),
               ),
             ),
           ),
         ),
         Image.asset(
-          'assets/images/advice_c.png',
+          message.photo(),
           scale: 3.0,
         ),
       ],
