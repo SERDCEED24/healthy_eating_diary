@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:healthy_eating_diary/models/food_report.dart';
 import 'package:healthy_eating_diary/widgets/scaffold_with_panel.dart';
 import 'package:provider/provider.dart';
 import 'package:healthy_eating_diary/screens/registration_screen.dart';
 import 'package:healthy_eating_diary/models/person.dart';
 import 'package:healthy_eating_diary/models/food.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 import 'dart:convert';
 import 'dart:async';
 
@@ -49,6 +51,7 @@ class MainAppState extends ChangeNotifier {
   var consumedCaloriesPerMeal = [0.0, 0.0, 0.0];
   List<Food> selectedFoodList = [];
   List<List<Food>> allSelectedFood = [[], [], []];
+  Map<String, FoodReport> reports = {};
   TextEditingController nameCtrl = TextEditingController();
   TextEditingController genderCtrl = TextEditingController();
   TextEditingController ageCtrl = TextEditingController();
@@ -130,6 +133,34 @@ class MainAppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  void saveReportsToJson() async {
+    final prefs = await SharedPreferences.getInstance();
+    String jsonString = jsonEncode(reports.map((key, value) => MapEntry(key, value.toJson())));
+    await prefs.setString('foodReports', jsonString);
+  }
+  void addOrReplaceReport() {
+    DateTime now = DateTime.now();
+    DateFormat dateFormat = DateFormat("dd.MM.yyyy");
+    String nowStr = dateFormat.format(now);
+    reports[nowStr] = FoodReport(calories: consumedSubstances[0], 
+                                 proteins: consumedSubstances[1], 
+                                 fats: consumedSubstances[2],
+                                 carbohydrates: consumedSubstances[3], 
+                                 caloriesNormal: kcalNormal, 
+                                 proteinsNormal: proteinsNormal, 
+                                 fatsNormal: fatsNormal, 
+                                 carbohydratesNormal: carbsNormal);
+  }
+  Future<void> loadReportsFromJson() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? jsonString = prefs.getString('foodReports');
+    if (jsonString != null) {
+      Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+      reports = jsonMap.map((key, value) => MapEntry(key, FoodReport.fromJson(value)));
+      notifyListeners();
+    }
+  }
+
   void _resetDiaryData() {
     consumedCaloriesPerMeal[0] = 0.0;
     consumedCaloriesPerMeal[1] = 0.0;
@@ -180,6 +211,8 @@ class MainAppState extends ChangeNotifier {
       consumedCaloriesPerMeal[mealIndex] = selectedFoodList.fold(0, (sum, food) => sum + (food.calories / 100 * food.weight));
       saveDiaryDataToSharedPrefs();
       saveAllSelectedMeals();
+      addOrReplaceReport();
+      saveReportsToJson();
       notifyListeners();
     }
   }
@@ -267,6 +300,7 @@ class MainAppState extends ChangeNotifier {
   MainAppState() {
     _initializeProfile();
     readDiaryDataFromSharedPrefs();
+    loadReportsFromJson();
     notifyListeners();
   }
   Future<void> _initializeProfile() async {
