@@ -98,20 +98,20 @@ class MainAppState extends ChangeNotifier {
   }
 
   List<double> getKbzhuList() {
-  double totalCalories = 0;
-  double totalProteins = 0;
-  double totalFats = 0;
-  double totalCarbohydrates = 0;
+    double totalCalories = 0;
+    double totalProteins = 0;
+    double totalFats = 0;
+    double totalCarbohydrates = 0;
 
-  for (var food in selectedFoodList) {
-    totalCalories += food.calories * food.weight / 100;
-    totalProteins += food.proteins * food.weight / 100;
-    totalFats += food.fats * food.weight / 100;
-    totalCarbohydrates += food.carbohydrates * food.weight / 100;
+    for (var food in selectedFoodList) {
+      totalCalories += food.calories * food.weight / 100;
+      totalProteins += food.proteins * food.weight / 100;
+      totalFats += food.fats * food.weight / 100;
+      totalCarbohydrates += food.carbohydrates * food.weight / 100;
+    }
+
+    return [totalCalories, totalProteins, totalFats, totalCarbohydrates];
   }
-
-  return [totalCalories, totalProteins, totalFats, totalCarbohydrates];
-}
 
   void sendProfileDataToTextFields() {
     if (user.isEmpty()) {
@@ -306,6 +306,7 @@ class MainAppState extends ChangeNotifier {
       addOrReplaceReport();
       saveReportsToJson();
       changeChartValues(0);
+      selectedFoodList = [];
       notifyListeners();
     }
   }

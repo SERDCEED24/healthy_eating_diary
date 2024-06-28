@@ -305,6 +305,11 @@ class MascotForCharts extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MainAppState>();
+    var perc = appState.percDiff.round();
+    String lastWords =  'выполнена на $perc%!';
+    if (perc > 100){
+      lastWords = 'перевыполнена на ${perc - 100}%.';
+    }
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -314,7 +319,7 @@ class MascotForCharts extends StatelessWidget {
           child: Card(
             child: Center(
               child: Text(
-                'Норма по ${["калориям", "белкам", "жирам", "углеводам"][appState.chartSubstanceIndex]} выполнена на ${appState.percDiff.round()}%!',
+                'Норма по ${["калориям", "белкам", "жирам", "углеводам"][appState.chartSubstanceIndex]} $lastWords',
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 22,

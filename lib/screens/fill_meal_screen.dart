@@ -53,11 +53,11 @@ class FillingSummary extends StatelessWidget {
     return Column(
       children: [
         Text(
-          'Общее кол-во КБЖУ: ${substanceList[0].round()}, ${substanceList[1].round()}, ${substanceList[2].round()}, ${substanceList[3].round()}',
+          'Выбрано КБЖУ: ${substanceList[0].round()}, ${substanceList[1].round()}, ${substanceList[2].round()}, ${substanceList[3].round()}',
           style: const TextStyle(fontSize: 20),
         ),
         Text(
-          'Норма КБЖУ: ${norms[0].round()}, ${norms[1].round()}, ${norms[2].round()}, ${norms[3].round()}',
+          'Норма КБЖУ для ${["завтрака", "обеда", "ужина"][mealIndex]}: ${norms[0].round()}, ${norms[1].round()}, ${norms[2].round()}, ${norms[3].round()}',
           style: const TextStyle(fontSize: 20),
         ),
       ],

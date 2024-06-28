@@ -43,7 +43,7 @@ class SquarePainter extends StatelessWidget {
 
     final List<double> fact = mainAppState.consumedSubstances; 
     double squareSize = 10.0; // Фиксированный размер квадрата в пикселях
-    EdgeInsetsGeometry padding = const EdgeInsets.only(top: 20, bottom: 25, left: 80, right: 80); // Задание отступов
+    EdgeInsetsGeometry padding = const EdgeInsets.only(top: 20, bottom: 25, left: 90, right: 90); // Задание отступов
 
     return Padding(
       padding: padding,

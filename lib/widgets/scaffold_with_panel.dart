@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:healthy_eating_diary/screens/charts_screen.dart';
 import 'package:healthy_eating_diary/screens/diary_screen.dart';
 import 'package:healthy_eating_diary/screens/profile_screen_normal.dart';
+import 'package:healthy_eating_diary/screens/user_guide_screen.dart';
 
 class ScaffoldWithPanel extends StatefulWidget {
   const ScaffoldWithPanel({super.key});
@@ -39,7 +40,28 @@ class _ScaffoldWithPanelState extends State<ScaffoldWithPanel> {
             });
           } ,
         ),
-        body: routes[currentPageIndex],
+        body: Stack(
+        children: [
+          routes[currentPageIndex],
+          Align(
+            alignment: Alignment.bottomLeft,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: FloatingActionButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const UserGuideScreen(),
+                    ),
+                  );
+                },
+                child: const Icon(Icons.question_mark),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
