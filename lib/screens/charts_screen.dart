@@ -42,7 +42,7 @@ class ChartHeader extends StatelessWidget {
     var appState = context.watch<MainAppState>();
     var headers = ["Калории", "Белки", "Жиры", "Углеводы"];
     return Text(
-            "${headers[appState.chartSubstanceIndex]}:",
+            headers[appState.chartSubstanceIndex],
             style: const TextStyle(
                fontSize: 22,
             ),
@@ -214,6 +214,12 @@ class OneChart extends StatelessWidget {
           showTitles: false,  
         ),
       ),
+      topTitles: const AxisTitles(
+        sideTitles: SideTitles(
+          showTitles: false
+        )
+      )
+      
     );
   }
 
@@ -298,19 +304,20 @@ class MascotForCharts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var appState = context.watch<MainAppState>();
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const SizedBox(
+        SizedBox(
           width: 220,
-          height: 130,
+          height: 160,
           child: Card(
             child: Center(
               child: Text(
-                'Норма по калориям выполнена на 34%!',
+                'Норма по ${["калориям", "белкам", "жирам", "углеводам"][appState.chartSubstanceIndex]} выполнена на ${appState.percDiff.round()}%!',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 20,
+                style: const TextStyle(
+                  fontSize: 22,
                 ),
               ),
             ),

@@ -10,26 +10,175 @@ class DiaryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SafeArea(
+    return SafeArea(
       child: Padding(
-        padding: EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(8.0),
         child: Center(
           child: Column(
             children: [
-              Mascot(),
-              SizedBox(
-                height: 50,
+              const Mascot(),
+              SquarePainter(),
+              const SizedBox(
+                height: 30,
               ),
-              StatusBars(),
-              SizedBox(
-                height: 50,
-              ),
-              Meals()
+              const Meals()
             ],
           ),
         ),
       ),
     );
+  }
+}                                                                                                                                                                                                                                                                                                                                     
+
+class SquarePainter extends StatelessWidget {
+ @override
+  Widget build(BuildContext context) {
+    final mainAppState = Provider.of<MainAppState>(context);
+    final List<double> norm = [
+      mainAppState.kcalNormal,
+      mainAppState.proteinsNormal,
+      mainAppState.fatsNormal,
+      mainAppState.carbsNormal,
+    ];
+
+    final List<double> fact = mainAppState.consumedSubstances; 
+    double squareSize = 10.0; // Фиксированный размер квадрата в пикселях
+    EdgeInsetsGeometry padding = const EdgeInsets.only(top: 20, bottom: 20, left: 50, right: 50); // Задание отступов
+
+    return Padding(
+      padding: padding,
+      child: Center(
+        child: GridView.builder(
+          padding: EdgeInsets.zero, // Обнуляем внутренние отступы у GridView
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 4,
+            mainAxisSpacing: 20.0,
+            crossAxisSpacing: 20.0,
+          ),
+          shrinkWrap: true,
+          itemCount: 4,
+          itemBuilder: (context, index) {
+            String text;
+            switch (index) {
+              case 0:
+                text = 'К (${fact[0].round()})';
+                break;
+              case 1:
+                text = 'Б (${fact[1].round()})';
+                break;
+              case 2:
+                text = 'Ж (${fact[2].round()})';
+                break;
+              case 3:
+                text = 'У (${fact[3].round()})';
+                break;
+              default:
+                text = '';
+            }
+            return Container(
+              height: 40,
+              width: 40, // Отступы вокруг каждого квадрата
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.black, width: 1),
+              ),
+              child: CustomPaint(
+                size: const Size(40, 40),
+                painter: MyPainter(norm: norm[index], fact: fact[index], text: text),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class MyPainter extends CustomPainter {
+  final double norm;
+  final double fact;
+  final String text;
+
+  MyPainter({required this.norm, required this.fact, required this.text});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    double percentage = (fact / norm) * 100;
+    double fillHeight = size.height * (percentage / 100);
+
+    // Ограничим fillHeight размером квадрата
+    double cappedFillHeight = fillHeight.clamp(0, size.height);
+    double overflowHeight = fillHeight > size.height ? fillHeight - size.height : 0;
+
+    Paint paint = Paint()..color = const Color.fromARGB(255, 215, 158, 224);
+
+    // Отрисовка заполненной области
+    canvas.drawRect(
+      Rect.fromLTWH(0, size.height - cappedFillHeight, size.width, cappedFillHeight),
+      paint,
+    );
+
+    // Отрисовка overflow
+    if (overflowHeight > 0) {
+      canvas.drawRect(
+        Rect.fromLTWH(0, -10, size.width, 10),
+        paint,
+      );
+    }
+
+    Paint borderPaint = Paint()
+      ..color = Colors.black
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke;
+      // Отрисовка квадрата без верхней стороны
+    Path path = Path();
+    path.moveTo(0, 0);
+    path.lineTo(0, size.height);
+    path.lineTo(size.width, size.height);
+    //path.lineTo(size.width, 0);
+    canvas.drawPath(path, borderPaint);
+    // Отрисовка буквы "К" в центре квадрата
+    TextSpan span = TextSpan(
+      style: TextStyle(color: Colors.black, fontSize: size.width / 5), // Динамически устанавливаем размер шрифта
+      text: text,
+    );
+
+    TextPainter textPainter = TextPainter(
+      text: span,
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.ltr,
+    );
+
+    textPainter.layout(minWidth: 0, maxWidth: size.width);
+    Offset textOffset = Offset(
+      (size.width - textPainter.width) / 2,
+      (size.height - textPainter.height) / 2,
+    );
+
+    textPainter.paint(canvas, textOffset);
+    // Отрисовка текста под квадратом
+    TextSpan spanBelow = TextSpan(
+      style: TextStyle(color: Colors.black, fontSize: size.width / 6), // Динамически устанавливаем размер шрифта
+      text: '${norm.round()}', 
+    );
+
+    TextPainter textPainterBelow = TextPainter(
+      text: spanBelow,
+      textAlign: TextAlign.center,
+      textDirection: TextDirection.ltr,
+    );
+
+    textPainterBelow.layout(minWidth: 0, maxWidth: size.width);
+    Offset textOffsetBelow = Offset(
+      (size.width - textPainterBelow.width) / 2,
+      size.height + 10, // Располагаем текст под квадратом с отступом
+    );
+
+    textPainterBelow.paint(canvas, textOffsetBelow);
+  }
+  
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return false;
   }
 }
 
@@ -128,7 +277,7 @@ class GenMeal extends StatelessWidget {
                   TextSpan(
                     text: mealName,
                     style: const TextStyle(
-                      fontSize: 29,
+                      fontSize: 27,
                       fontWeight: FontWeight.w500,
                       color: Colors.black,
                     ),
@@ -136,7 +285,7 @@ class GenMeal extends StatelessWidget {
                   TextSpan(
                     text: "\nФакт: ${appState.consumedCaloriesPerMeal[appState.getMealIndex(mealName)].round()}  Цель: ${appState.mealNorms[mealName].round()}",
                     style: const TextStyle(
-                      fontSize: 26,
+                      fontSize: 23,
                       fontWeight: FontWeight.normal,
                       color: Colors.black,
                     ),

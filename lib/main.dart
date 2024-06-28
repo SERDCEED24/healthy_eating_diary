@@ -46,6 +46,7 @@ class MainAppState extends ChangeNotifier {
   double carbsNormal = 0.0;
   double fatsNormal = 0.0;
   int chartSubstanceIndex = 0;
+  double percDiff = 0;
   var dailyNorms = {};
   var mealNorms = {};
   List<double> chartPointsReal = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]; 
@@ -75,8 +76,26 @@ class MainAppState extends ChangeNotifier {
     user.weight = double.parse(weightCtrl.text.trim());
     user.height = double.parse(heightCtrl.text.trim());
     saveProfileDataToSharedPrefs();
+    calculateNorms();
     notifyListeners();
   }
+
+  double calculateTotalPercentageDifference(List<double> norm, List<double> real) {
+  if (norm.length != real.length) {
+    throw ArgumentError('Arrays must have the same length');
+  }
+
+  double sumNorm = norm.reduce((a, b) => a + b);
+  double sumReal = real.reduce((a, b) => a + b);
+
+  if (sumNorm == 0) {
+    throw ArgumentError('Sum of the norm array is zero, cannot calculate percentage difference');
+  }
+
+  double percentageDifference = (sumReal - sumNorm).abs() / sumNorm * 100;
+
+  return percentageDifference;
+}
 
   List<double> getKbzhuList() {
   double totalCalories = 0;
@@ -156,7 +175,7 @@ class MainAppState extends ChangeNotifier {
         chartPointsReal = carbsReal;
         break;
     }
-
+    percDiff = calculateTotalPercentageDifference(chartPointsNorm, chartPointsReal);
     notifyListeners();
   }
 
@@ -372,16 +391,17 @@ class MainAppState extends ChangeNotifier {
   }
   MainAppState() {
     _initializeProfile();
-    readDiaryDataFromSharedPrefs();
-    loadReportsFromJson();
-    changeChartValues(0);
+    
     notifyListeners();
   }
   Future<void> _initializeProfile() async {
     user = await readProfileDataFromSharedPrefs();
     sendProfileDataToTextFields();
     calculateNorms();
-    loadAllSelectedMeals();
+    await loadAllSelectedMeals();
+    readDiaryDataFromSharedPrefs();
+    await loadReportsFromJson();
+    changeChartValues(0);
     notifyListeners();
   }
 }

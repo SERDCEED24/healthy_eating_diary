@@ -8,7 +8,7 @@ import 'package:healthy_eating_diary/main.dart';
 class FillMealScreen extends StatelessWidget {
   final int mealIndex;
   const FillMealScreen({super.key, required this.mealIndex});
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +24,7 @@ class FillMealScreen extends StatelessWidget {
                 ),
                 const SelectionHeader(),
                 ListOfDishes(mealIndex: mealIndex,),
-                FillingSummary(),
+                FillingSummary(mealIndex: mealIndex,),
                 FinishSelectingButton(mealIndex: mealIndex,),
               ],
             ),
@@ -36,17 +36,31 @@ class FillMealScreen extends StatelessWidget {
 }
 
 class FillingSummary extends StatelessWidget {
+  final int mealIndex;
+
   const FillingSummary({
     super.key,
+    required this.mealIndex,
   });
 
   @override
   Widget build(BuildContext context) {
+    var mealNames = ["Завтрак", "Обед", "Ужин"];
     var appState = context.watch<MainAppState>();
     var substanceList = appState.getKbzhuList();
-    return Text(
-      'Общее кол-во КБЖУ: ${substanceList[0].round()}, ${substanceList[1].round()}, ${substanceList[2].round()}, ${substanceList[3].round()}',
-      style: TextStyle(fontSize: 20),
+    var calNorm = appState.mealNorms[mealNames[mealIndex]];
+    var norms = [calNorm, calNorm * 0.3 / 4, calNorm * 0.3 / 9, calNorm * 0.4 / 4];
+    return Column(
+      children: [
+        Text(
+          'Общее кол-во КБЖУ: ${substanceList[0].round()}, ${substanceList[1].round()}, ${substanceList[2].round()}, ${substanceList[3].round()}',
+          style: const TextStyle(fontSize: 20),
+        ),
+        Text(
+          'Норма КБЖУ: ${norms[0].round()}, ${norms[1].round()}, ${norms[2].round()}, ${norms[3].round()}',
+          style: const TextStyle(fontSize: 20),
+        ),
+      ],
     );
   }
 }
@@ -63,11 +77,12 @@ class ListOfDishes extends StatefulWidget {
 }
 
 class _ListOfDishesState extends State<ListOfDishes> {
-  List<Food> foodList= [];
+  List<Food> foodList = [];
   List<Food> selectedFoodList = [];
   List<Food> displayedFoodList = [];
 
   TextEditingController searchController = TextEditingController();
+  ScrollController _scrollController = ScrollController(); // Add ScrollController
 
   @override
   void initState() {
@@ -78,7 +93,8 @@ class _ListOfDishesState extends State<ListOfDishes> {
   Future<void> _loadFoodList() async {
     var input = await rootBundle.loadString('assets/food_db.json');
     var json = jsonDecode(input) as List<dynamic>;
-    List<Food> loadedFoodList = json.map((dynamic e) => Food.fromJson(e as Map<String, dynamic>)).toList();
+    List<Food> loadedFoodList =
+        json.map((dynamic e) => Food.fromJson(e as Map<String, dynamic>)).toList();
 
     setState(() {
       foodList = loadedFoodList;
@@ -99,13 +115,12 @@ class _ListOfDishesState extends State<ListOfDishes> {
     context.read<MainAppState>().updateSelectedFoods(selectedFoodList, widget.mealIndex);
   }
 
-  void _toggleSelectionOn(Food food){
+  void _toggleSelectionOn(Food food) {
     if (!selectedFoodList.contains(food)) {
       setState(() {
         selectedFoodList.add(food);
       });
-    }
-    else{
+    } else {
       selectedFoodList.removeWhere((item) => item.name == food.name);
       selectedFoodList.add(food);
     }
@@ -114,14 +129,14 @@ class _ListOfDishesState extends State<ListOfDishes> {
 
   void _incrementWeight(Food food) {
     setState(() {
-      food.weight += 20;
+      food.weight += 10;
     });
   }
 
   void _decrementWeight(Food food) {
-    if (food.weight > 50) { 
+    if (food.weight > 50) {
       setState(() {
-        food.weight -= 20;
+        food.weight -= 10;
       });
     }
   }
@@ -170,52 +185,61 @@ class _ListOfDishesState extends State<ListOfDishes> {
               ),
               SizedBox(
                 width: 500,
-                height:400,
-                child: ListView.builder(
-                  itemCount: displayedFoodList.length,
-                  itemBuilder: (context, index) {
-                    Food food = displayedFoodList[index];
-                    bool isSelected = selectedFoodList.contains(food);
-                
-                    return ListTile(
-                      title: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SizedBox(
-                            width: 200,
-                            child: Text(food.toString(), softWrap: true,)
-                          ),
-                          Row(
-                            children: [
-                              IconButton(
-                                icon: const Icon(Icons.remove),
-                                onPressed: () {
-                                  _toggleSelectionOn(food);
-                                  _decrementWeight(food);
-                                },
+                height: 380,
+                child: Scrollbar(
+                  controller: _scrollController,
+                  thumbVisibility: true,
+                  thickness: 12,
+                  child: ListView.builder(
+                    controller: _scrollController,
+                    itemCount: displayedFoodList.length,
+                    itemBuilder: (context, index) {
+                      Food food = displayedFoodList[index];
+                      bool isSelected = selectedFoodList.contains(food);
+
+                      return ListTile(
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            SizedBox(
+                              width: 200,
+                              child: Text(
+                                food.toString(),
+                                softWrap: true,
                               ),
-                              IconButton(
-                                icon: const Icon(Icons.add),
-                                onPressed: () {
-                                  _toggleSelectionOn(food);
-                                  _incrementWeight(food);
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      trailing: Checkbox(
-                        value: isSelected,
-                        onChanged: (bool? value) {
+                            ),
+                            Row(
+                              children: [
+                                IconButton(
+                                  icon: const Icon(Icons.remove),
+                                  onPressed: () {
+                                    _toggleSelectionOn(food);
+                                    _decrementWeight(food);
+                                  },
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.add),
+                                  onPressed: () {
+                                    _toggleSelectionOn(food);
+                                    _incrementWeight(food);
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        trailing: Checkbox(
+                          value: isSelected,
+                          onChanged: (bool? value) {
+                            _toggleSelection(food);
+                          },
+                        ),
+                        onTap: () {
                           _toggleSelection(food);
                         },
-                      ),
-                      onTap: () {
-                        _toggleSelection(food);
-                      },
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
               ),
             ],
