@@ -82,7 +82,7 @@ class _ListOfDishesState extends State<ListOfDishes> {
   List<Food> displayedFoodList = [];
 
   TextEditingController searchController = TextEditingController();
-  ScrollController _scrollController = ScrollController(); // Add ScrollController
+  ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {

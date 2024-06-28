@@ -20,7 +20,7 @@ class ChartsScreen extends StatelessWidget {
             children: [
               MascotForCharts(),
               SizedBox(
-                height: 50,
+                height: 8,
               ),
               ChartHeader(),
               Charts(),

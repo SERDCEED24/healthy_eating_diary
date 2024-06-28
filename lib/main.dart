@@ -89,7 +89,7 @@ class MainAppState extends ChangeNotifier {
     double sumReal = real.reduce((a, b) => a + b);
 
     if (sumNorm == 0) {
-      return -1;
+      return 0;
     }
 
     double percentageDifference = sumReal / sumNorm * 100;

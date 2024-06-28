@@ -43,7 +43,7 @@ class SquarePainter extends StatelessWidget {
 
     final List<double> fact = mainAppState.consumedSubstances; 
     double squareSize = 10.0; // Фиксированный размер квадрата в пикселях
-    EdgeInsetsGeometry padding = const EdgeInsets.only(top: 20, bottom: 25, left: 90, right: 90); // Задание отступов
+    EdgeInsetsGeometry padding = const EdgeInsets.only(top: 20, bottom: 25, left: 8, right: 8); // Задание отступов
 
     return Padding(
       padding: padding,
@@ -51,7 +51,7 @@ class SquarePainter extends StatelessWidget {
         child: GridView.builder(
           padding: EdgeInsets.zero, // Обнуляем внутренние отступы у GridView
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
+            crossAxisCount: 4,
             mainAxisSpacing: 50.0,
             crossAxisSpacing: 35.0,
           ),
