@@ -81,21 +81,21 @@ class MainAppState extends ChangeNotifier {
   }
 
   double calculateTotalPercentageDifference(List<double> norm, List<double> real) {
-  if (norm.length != real.length) {
-    throw ArgumentError('Arrays must have the same length');
+    if (norm.length != real.length) {
+      throw ArgumentError('Arrays must have the same length');
+    }
+
+    double sumNorm = norm.reduce((a, b) => a + b);
+    double sumReal = real.reduce((a, b) => a + b);
+
+    if (sumNorm == 0) {
+      return -1;
+    }
+
+    double percentageDifference = sumReal / sumNorm * 100;
+
+    return percentageDifference;
   }
-
-  double sumNorm = norm.reduce((a, b) => a + b);
-  double sumReal = real.reduce((a, b) => a + b);
-
-  if (sumNorm == 0) {
-    throw ArgumentError('Sum of the norm array is zero, cannot calculate percentage difference');
-  }
-
-  double percentageDifference = (sumReal - sumNorm).abs() / sumNorm * 100;
-
-  return percentageDifference;
-}
 
   List<double> getKbzhuList() {
   double totalCalories = 0;
@@ -188,7 +188,7 @@ class MainAppState extends ChangeNotifier {
     prefs.setDouble('calories_day', consumedSubstances[0]);
     prefs.setDouble('proteins_day', consumedSubstances[1]);
     prefs.setDouble('fats_day', consumedSubstances[2]);
-    prefs.setDouble('carbs_day', consumedSubstances[3]);
+    prefs.setDouble('carbohydrates_day', consumedSubstances[3]);
     prefs.setString('last_saved_date', DateTime.now().toIso8601String());
   }
 
@@ -300,6 +300,7 @@ class MainAppState extends ChangeNotifier {
       consumedSubstances[2] = consumedSubstances[2] + selectedFoodList.fold(0, (sum, food) => sum + (food.fats / 100 * food.weight));
       consumedSubstances[3] = consumedSubstances[3] + selectedFoodList.fold(0, (sum, food) => sum + (food.carbohydrates / 100 * food.weight));
       consumedCaloriesPerMeal[mealIndex] = selectedFoodList.fold(0, (sum, food) => sum + (food.calories / 100 * food.weight));
+      notifyListeners();
       saveDiaryDataToSharedPrefs();
       saveAllSelectedMeals();
       addOrReplaceReport();

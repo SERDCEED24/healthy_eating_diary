@@ -33,7 +33,7 @@ class DiaryScreen extends StatelessWidget {
 class SquarePainter extends StatelessWidget {
  @override
   Widget build(BuildContext context) {
-    final mainAppState = Provider.of<MainAppState>(context);
+    final mainAppState = context.watch<MainAppState>();
     final List<double> norm = [
       mainAppState.kcalNormal,
       mainAppState.proteinsNormal,
@@ -43,7 +43,7 @@ class SquarePainter extends StatelessWidget {
 
     final List<double> fact = mainAppState.consumedSubstances; 
     double squareSize = 10.0; // Фиксированный размер квадрата в пикселях
-    EdgeInsetsGeometry padding = const EdgeInsets.only(top: 20, bottom: 20, left: 50, right: 50); // Задание отступов
+    EdgeInsetsGeometry padding = const EdgeInsets.only(top: 20, bottom: 25, left: 80, right: 80); // Задание отступов
 
     return Padding(
       padding: padding,
@@ -51,9 +51,9 @@ class SquarePainter extends StatelessWidget {
         child: GridView.builder(
           padding: EdgeInsets.zero, // Обнуляем внутренние отступы у GridView
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 4,
-            mainAxisSpacing: 20.0,
-            crossAxisSpacing: 20.0,
+            crossAxisCount: 2,
+            mainAxisSpacing: 50.0,
+            crossAxisSpacing: 35.0,
           ),
           shrinkWrap: true,
           itemCount: 4,
@@ -76,13 +76,13 @@ class SquarePainter extends StatelessWidget {
                 text = '';
             }
             return Container(
-              height: 40,
-              width: 40, // Отступы вокруг каждого квадрата
+              height: 10,
+              width: 10, // Отступы вокруг каждого квадрата
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.black, width: 1),
               ),
               child: CustomPaint(
-                size: const Size(40, 40),
+                size: const Size(10, 10),
                 painter: MyPainter(norm: norm[index], fact: fact[index], text: text),
               ),
             );
@@ -129,13 +129,16 @@ class MyPainter extends CustomPainter {
       ..color = Colors.black
       ..strokeWidth = 1
       ..style = PaintingStyle.stroke;
-      // Отрисовка квадрата без верхней стороны
+
+    // Отрисовка рамки квадрата
     Path path = Path();
     path.moveTo(0, 0);
     path.lineTo(0, size.height);
     path.lineTo(size.width, size.height);
-    //path.lineTo(size.width, 0);
+    path.lineTo(size.width, 0);
+    path.close();
     canvas.drawPath(path, borderPaint);
+
     // Отрисовка буквы "К" в центре квадрата
     TextSpan span = TextSpan(
       style: TextStyle(color: Colors.black, fontSize: size.width / 5), // Динамически устанавливаем размер шрифта
@@ -155,10 +158,11 @@ class MyPainter extends CustomPainter {
     );
 
     textPainter.paint(canvas, textOffset);
+
     // Отрисовка текста под квадратом
     TextSpan spanBelow = TextSpan(
       style: TextStyle(color: Colors.black, fontSize: size.width / 6), // Динамически устанавливаем размер шрифта
-      text: '${norm.round()}', 
+      text: '${norm.round()}',
     );
 
     TextPainter textPainterBelow = TextPainter(
@@ -175,10 +179,13 @@ class MyPainter extends CustomPainter {
 
     textPainterBelow.paint(canvas, textOffsetBelow);
   }
-  
+
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
-    return false;
+    if (oldDelegate is MyPainter) {
+      return norm != oldDelegate.norm || fact != oldDelegate.fact || text != oldDelegate.text;
+    }
+    return true;
   }
 }
 
@@ -252,7 +259,9 @@ class Meals extends StatelessWidget {
     return Column(
       children: [
         GenMeal(mealName: "Завтрак"),
+        const SizedBox(height: 10,),
         GenMeal(mealName: "Обед"),
+        const SizedBox(height: 10,),
         GenMeal(mealName: "Ужин"),
       ],
     );
@@ -265,37 +274,40 @@ class GenMeal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var appState = context.watch<MainAppState>();
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: mealName,
-                    style: const TextStyle(
-                      fontSize: 27,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
+    return SizedBox(
+      height: 70,
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: mealName,
+                      style: const TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                      ),
                     ),
-                  ),
-                  TextSpan(
-                    text: "\nФакт: ${appState.consumedCaloriesPerMeal[appState.getMealIndex(mealName)].round()}  Цель: ${appState.mealNorms[mealName].round()}",
-                    style: const TextStyle(
-                      fontSize: 23,
-                      fontWeight: FontWeight.normal,
-                      color: Colors.black,
+                    TextSpan(
+                      text: "\nФакт: ${appState.consumedCaloriesPerMeal[appState.getMealIndex(mealName)].round()} ккал.  Цель: ${appState.mealNorms[mealName].round()} ккал.",
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.black,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
+                textAlign: TextAlign.start,
               ),
-              textAlign: TextAlign.start,
-            ),
-            appState.isMealFilled(mealName) ? CheckMealButton(mealName: mealName,) : AddFoodButton(mealName: mealName) 
-          ],
+              appState.isMealFilled(mealName) ? CheckMealButton(mealName: mealName,) : AddFoodButton(mealName: mealName) 
+            ],
+          ),
         ),
       ),
     );
