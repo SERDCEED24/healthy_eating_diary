@@ -27,7 +27,7 @@ class Message {
     if (consumedCalories < normCalories ) {
       return 1;
     }
-    if (consumedCalories <= normCalories){
+    if (consumedCalories == normCalories){
       return 2;
     }
     return 3;
