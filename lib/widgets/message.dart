@@ -24,10 +24,10 @@ class Message {
 
   // Метод, который проверяет, выполнена ли норма потребления калорий
   int isNormMet() {
-    if (consumedCalories < 0.9 * normCalories ) {
+    if (consumedCalories < normCalories ) {
       return 1;
     }
-    if (consumedCalories <= 1.1* normCalories){
+    if (consumedCalories <= normCalories){
       return 2;
     }
     return 3;
