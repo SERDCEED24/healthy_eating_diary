@@ -18,10 +18,10 @@ class FillMealScreen extends StatelessWidget {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Image.asset(
+                /* Image.asset(
                   'assets/images/editing.png',
                   scale: 3,
-                ),
+                ),*/
                 const SelectionHeader(),
                 ListOfDishes(mealIndex: mealIndex,),
                 FillingSummary(mealIndex: mealIndex,),

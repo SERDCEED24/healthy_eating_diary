@@ -77,6 +77,7 @@ class MainAppState extends ChangeNotifier {
     user.height = double.parse(heightCtrl.text.trim());
     saveProfileDataToSharedPrefs();
     calculateNorms();
+    changeChartValues(0);
     notifyListeners();
   }
 

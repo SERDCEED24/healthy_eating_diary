@@ -36,28 +36,34 @@ class CheckMealScreen extends StatelessWidget {
 
 class ListOfSelectedDishes extends StatelessWidget {
   final List<Food> foodList;
+  final ScrollController _scrollController = ScrollController();
 
-  const ListOfSelectedDishes({super.key, required this.foodList});
+  ListOfSelectedDishes({Key? key, required this.foodList}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return foodList.isEmpty
         ? const Center(child: Text('Еды нет'))
         : SizedBox(
-          width: 500,
-          height: 400,
-          child: ListView.builder(
-              itemCount: foodList.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(foodList[index].toString()),
-                );
-              },
+            width: 500,
+            height: 400,
+            child: Scrollbar(
+              thickness: 12.0,
+              thumbVisibility: true, 
+              controller: _scrollController,
+              child: ListView.builder(
+                controller: _scrollController,
+                itemCount: foodList.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(foodList[index].toString()),
+                  );
+                },
+              ),
             ),
-        );
+          );
   }
 }
-
 class MealHeader extends StatelessWidget {
   String mealName;
   MealHeader({
